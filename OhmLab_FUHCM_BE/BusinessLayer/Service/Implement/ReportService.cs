@@ -1,0 +1,899 @@
+using BusinessLayer.RequestModel.Report;
+using BusinessLayer.ResponseModel.Report;
+using BusinessLayer.ResponseModel.BaseResponse;
+using DataLayer.Entities;
+using DataLayer.Repository;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
+using BusinessLayer.ResponseModel.Slot;
+using BusinessLayer.ResponseModel.Class;
+
+namespace BusinessLayer.Service.Implement
+{
+    public class ReportService : IReportService
+    {
+        private readonly IReportRepository _reportRepository;
+        private readonly IScheduleRepository _scheduleRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IClassRepository _classRepository;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly IRegistrationScheduleRepository _registrationScheduleRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<ReportService> _logger;
+
+        public ReportService(
+            IReportRepository reportRepository,
+            IScheduleRepository scheduleRepository,
+            IUserRepository userRepository,
+            IClassRepository classRepository,
+            ISubjectRepository subjectRepository,
+            IRegistrationScheduleRepository registrationScheduleRepository,
+            IMapper mapper,
+            ILogger<ReportService> logger)
+        {
+            _reportRepository = reportRepository;
+            _scheduleRepository = scheduleRepository;
+            _userRepository = userRepository;
+            _classRepository = classRepository;
+            _subjectRepository = subjectRepository;
+            _registrationScheduleRepository = registrationScheduleRepository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        public async Task<BaseResponse<ReportResponseModel>> CreateReportAsync(CreateReportRequestModel model, Guid userId)
+        {
+            try
+            {
+                // Validate user exists and has proper role
+                var user = await _userRepository.GetUserById(userId);
+                if (user == null)
+                {
+                    return new BaseResponse<ReportResponseModel>
+                    {
+                        Code = 404,
+                        Success = false,
+                        Message = "Không tìm thấy người dùng!",
+                        Data = null
+                    };
+                }
+
+                // Only Student and Lecturer can create reports
+                if (user.UserRoleName != "Student" && user.UserRoleName != "Lecturer")
+                {
+                    return new BaseResponse<ReportResponseModel>
+                    {
+                        Code = 403,
+                        Success = false,
+                        Message = "Chỉ sinh viên và giảng viên mới có thể tạo báo cáo!",
+                        Data = null
+                    };
+                }
+
+                // Find schedule based on today's date, slot, and class
+                var today = DateTime.Today;
+                var schedule = await FindScheduleByUserSelectionAsync(userId, today, model.SelectedSlot, model.SelectedClass, user.UserRoleName);
+                if (schedule == null)
+                {
+                    return new BaseResponse<ReportResponseModel>
+                    {
+                        Code = 404,
+                        Message = "Không tìm thấy lịch học phù hợp cho hôm nay hoặc bạn không có quyền truy cập!",
+                        Data = null
+                    };
+                }
+
+                var report = new Report
+                {
+                    UserId = userId,
+                    RegistrationScheduleId = schedule.RegistrationScheduleId,
+                    ReportTitle = model.ReportTitle,
+                    ReportDescription = model.ReportDescription,
+                    ReportCreateDate = DateTime.Now,
+                    ReportStatus = "Pending"
+                };
+
+                var createdReport = await _reportRepository.CreateAsync(report);
+                var response = await MapToReportResponseModel(createdReport);
+
+
+                return new BaseResponse<ReportResponseModel>
+                {
+                    Code = 201,
+                    Success = true,
+                    Message = "Tạo báo cáo thành công!",
+                    Data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in CreateReport: {Message}", ex.Message);
+                return new BaseResponse<ReportResponseModel>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetTodaySlotsAsync(Guid userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserById(userId);
+                if (user == null)
+                {
+                    return new BaseResponse<object>
+                    {
+                        Code = 404,
+                        Success = false,
+                        Message = "Không tìm thấy người dùng!",
+                        Data = null
+                    };
+                }
+
+                // Only Student and Lecturer can access this
+                if (user.UserRoleName != "Student" && user.UserRoleName != "Lecturer")
+                {
+                    return new BaseResponse<object>
+                    {
+                        Code = 403,
+                        Success = false,
+                        Message = "Chỉ sinh viên và giảng viên mới có thể xem lịch học!",
+                        Data = null
+                    };
+                }
+
+                var today = DateTime.Today;
+                var todaySchedules = await GetUserTodaySchedulesAsync(userId, user.UserRoleName);
+
+                var availableSlots = new List<BusinessLayer.ResponseModel.Report.SlotResponseModel>();
+                
+                // Filter schedules with complete navigation properties
+                var validSchedules = todaySchedules
+                    .Where(s => s.Slot != null)
+                    .ToList();
+
+                _logger.LogInformation($"Found {validSchedules.Count} valid lab schedules with complete navigation properties out of {todaySchedules.Count} total");
+                var warnings = new List<string>();
+                if (validSchedules.Any())
+                {
+                    availableSlots = validSchedules
+                        .GroupBy(s => new { 
+                            SlotId = s.Slot.SlotId,
+                            SlotName = s.Slot.SlotName,
+                            SlotStartTime = s.Slot.SlotStartTime,
+                            SlotEndTime = s.Slot.SlotEndTime
+                        })
+                        .Select(g => new BusinessLayer.ResponseModel.Report.SlotResponseModel
+                        {
+                            SlotName = g.Key.SlotName,
+                            SlotStartTime = g.Key.SlotStartTime,
+                            SlotEndTime = g.Key.SlotEndTime,
+                            ScheduleCount = g.Count()
+                        })
+                        .OrderBy(s => s.SlotStartTime)
+                        .ToList();
+
+                    _logger.LogInformation($"Grouped into {availableSlots.Count} unique slots");
+                    
+                    if(user.UserRoleName == "Lecturer")
+                    {
+                        var conflictslots = availableSlots.Where(s => s.ScheduleCount >= 2).ToList();
+                        if (conflictslots.Any())
+                        {
+                            
+                            foreach (var slot in conflictslots)
+                            {
+                                var conflictmessage =
+                                ($"Con vợ cẩn thận đấy thằng admin duyệt ngu rồi, duyệt hẳn {slot.ScheduleCount} trùng nhau kìa con vợ");
+                                _logger.LogWarning(conflictmessage);
+                                warnings.Add(conflictmessage);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("No lab schedules found with complete navigation properties (RegistrationSchedule->Slot)");
+                }
+
+                var result = new
+                {
+                    Slots = availableSlots,
+                    TotalCount = availableSlots.Count,
+                    Today = today.ToString("dd/MM/yyyy"),
+                    Warnings = warnings
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách slot hôm nay thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetTodaySlots: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetTodayClassesAsync(Guid userId, string slotName)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserById(userId);
+                if (user == null)
+                {
+                    return new BaseResponse<object>
+                    {
+                        Code = 404,
+                        Success = false,
+                        Message = "Không tìm thấy người dùng!",
+                        Data = null
+                    };
+                }
+
+                // Only Student and Lecturer can access this
+                if (user.UserRoleName != "Student" && user.UserRoleName != "Lecturer")
+                {
+                    return new BaseResponse<object>
+                    {
+                        Code = 403,
+                        Success = false,
+                        Message = "Chỉ sinh viên và giảng viên mới có thể xem lịch học!",
+                        Data = null
+                    };
+                }
+
+                var todaySchedules = await GetUserTodaySchedulesAsync(userId, user.UserRoleName);
+                var filteredSchedules = todaySchedules
+                    .Where(s => s.Slot?.SlotName == slotName)
+                    .ToList();
+
+                // Debug: Log schedule details
+                foreach (var schedule in filteredSchedules)
+                {
+                    _logger.LogDebug($"RegistrationSchedule {schedule.RegistrationScheduleId}: Class {schedule.Class?.ClassName}, Date: {schedule.RegistrationScheduleDate:yyyy-MM-dd}, Slot: {schedule.Slot?.SlotName}");
+                }
+
+                var availableClasses = filteredSchedules
+                    .Select(s => new BusinessLayer.ResponseModel.Report.ClassResponseModel
+                    {
+                        ClassName = s.Class?.ClassName ?? "Unknown",
+                        SubjectName = s.Class?.Subject?.SubjectName ?? "Unknown",
+                        LecturerName = s.User?.UserFullName ?? "Unknown",
+                        ScheduleId = s.RegistrationScheduleId
+                    })
+                    .OrderBy(c => c.ClassName)
+                    .ToList();
+
+                _logger.LogInformation($"Found {availableClasses.Count} classes for slot '{slotName}' on {DateTime.Today:yyyy-MM-dd}");
+
+                var result = new
+                {
+                    Classes = availableClasses,
+                    TotalCount = availableClasses.Count,
+                    Today = DateTime.Today.ToString("dd/MM/yyyy"),
+                    SlotName = slotName
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách lớp hôm nay thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetTodayClasses: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        // Helper methods
+        private async Task<List<RegistrationSchedule>> GetUserTodaySchedulesAsync(Guid userId, string userRole)
+        {
+            try
+            {
+                var today = DateTime.Today;
+                List<RegistrationSchedule> todaySchedules;
+                var userSchedules = new List<RegistrationSchedule>();
+
+                if (userRole == "Student")
+                {
+                    var studentClasses = await _classRepository.GetByStudentIdAsync(userId);
+                    var classIds = studentClasses.Select(c => c.ClassId).ToList();
+                    
+                    // Lấy registration schedules cho các lớp của sinh viên
+                    todaySchedules = new List<RegistrationSchedule>();
+                    foreach (var classId in classIds)
+                    {
+                        var classSchedules = await _registrationScheduleRepository.GetByClassIdAndDateWithIncludesAsync(classId, today);
+                        todaySchedules.AddRange(classSchedules);
+                    }
+                    userSchedules = todaySchedules;
+                    
+                    _logger.LogInformation($"Student {userId} has {studentClasses.Count} classes, {userSchedules.Count} lab schedules today");
+                }
+                else if (userRole == "Lecturer")
+                {
+                    // Lấy registration schedules cho giảng viên
+                    todaySchedules = await _registrationScheduleRepository.GetByTeacherIdAndDateWithIncludesAsync(userId, today);
+                    userSchedules = todaySchedules;
+                    
+                    _logger.LogInformation($"Lecturer {userId} has {userSchedules.Count} lab schedules today");
+                }
+                else
+                {
+                    return new List<RegistrationSchedule>();
+                }
+
+                _logger.LogInformation($"Found {todaySchedules.Count} lab schedules for today: {today:yyyy-MM-dd}");
+
+                // Validate navigation properties are loaded
+                foreach (var schedule in userSchedules)
+                {
+                    if (schedule.Class == null)
+                    {
+                        _logger.LogWarning($"RegistrationSchedule {schedule.RegistrationScheduleId} has null Class");
+                        continue;
+                    }
+                    if (schedule.Slot == null)
+                    {
+                        _logger.LogWarning($"RegistrationSchedule {schedule.RegistrationScheduleId} has null Slot");
+                        continue;
+                    }
+                    if (schedule.User == null)
+                    {
+                        _logger.LogWarning($"RegistrationSchedule {schedule.RegistrationScheduleId} has null User");
+                        continue;
+                    }
+                    
+                    _logger.LogDebug($"RegistrationSchedule {schedule.RegistrationScheduleId}: Class {schedule.Class.ClassName} -> Slot {schedule.Slot.SlotName} -> Teacher {schedule.User.UserFullName}");
+                }
+
+                return userSchedules;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetUserTodaySchedulesAsync for user {UserId}, role {UserRole}", userId, userRole);
+                return new List<RegistrationSchedule>();
+            }
+        }
+
+        private async Task<bool> ValidateUserAccessToSchedule(RegistrationSchedule schedule, Guid userId, string userRole)
+        {
+            if (schedule == null) return false;
+
+            if (userRole == "Student")
+            {
+                var studentClasses = await _classRepository.GetByStudentIdAsync(userId);
+                return studentClasses.Any(c => c.ClassId == schedule.ClassId);
+            }
+            else if (userRole == "Lecturer")
+            {
+                return schedule.TeacherId == userId;
+            }
+            return false;
+        }
+
+
+        private async Task<RegistrationSchedule?> FindScheduleByUserSelectionAsync(Guid userId, DateTime date, string slotName, string className, string userRole)
+        {
+            List<RegistrationSchedule> todaySchedules;
+            
+            if (userRole == "Student")
+            {
+                var studentClasses = await _classRepository.GetByStudentIdAsync(userId);
+                var classIds = studentClasses.Select(c => c.ClassId).ToList();
+                
+                todaySchedules = new List<RegistrationSchedule>();
+                foreach (var classId in classIds)
+                {
+                    var classSchedules = await _registrationScheduleRepository.GetByClassIdAndDateWithIncludesAsync(classId, date);
+                    todaySchedules.AddRange(classSchedules);
+                }
+            }
+            else if (userRole == "Lecturer")
+            {
+                todaySchedules = await _registrationScheduleRepository.GetByTeacherIdAndDateWithIncludesAsync(userId, date);
+            }
+            else
+            {
+                return null;
+            }
+            
+            return todaySchedules.FirstOrDefault(s => 
+                s.Slot?.SlotName == slotName &&
+                s.Class?.ClassName == className);
+        }
+
+        // Existing methods (simplified)
+        public async Task<BaseResponse<ReportResponseModel>> GetReportByIdAsync(int reportId)
+        {
+            try
+            {
+                var report = await _reportRepository.GetByIdAsync(reportId);
+                if (report == null)
+                {
+                    return new BaseResponse<ReportResponseModel>
+                    {
+                        Code = 404,
+                        Success = false,
+                        Message = "Không tìm thấy báo cáo!",
+                        Data = null
+                    };
+                }
+
+                var response = await MapToReportResponseModel(report);
+                return new BaseResponse<ReportResponseModel>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy thông tin báo cáo thành công!",
+                    Data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetReportById: {Message}", ex.Message);
+                return new BaseResponse<ReportResponseModel>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<ReportDetailResponseModel>> GetReportDetailAsync(int reportId)
+        {
+            try
+            {
+                var report = await _reportRepository.GetByIdAsync(reportId);
+                if (report == null)
+                {
+                    return new BaseResponse<ReportDetailResponseModel>
+                    {
+                        Code = 404,
+                        Success = false,
+                        Message = "Không tìm thấy báo cáo!",
+                        Data = null
+                    };
+                }
+
+                var response = await MapToReportDetailResponseModel(report);
+                return new BaseResponse<ReportDetailResponseModel>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy thông tin chi tiết báo cáo thành công!",
+                    Data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetReportDetail: {Message}", ex.Message);
+                return new BaseResponse<ReportDetailResponseModel>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetAllReportsAsync()
+        {
+            try
+            {
+                var reports = await _reportRepository.GetAllAsync();
+                
+                var reportResponses = new List<ReportResponseModel>();
+                foreach (var report in reports)
+                {
+                    var response = await MapToReportResponseModel(report);
+                    reportResponses.Add(response);
+                }
+
+                var result = new
+                {
+                    Reports = reportResponses,
+                    TotalCount = reportResponses.Count
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách báo cáo thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetAllReports: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<ReportResponseModel>> UpdateReportStatusAsync(int reportId, UpdateReportStatusRequestModel model)
+        {
+            try
+            {
+                var report = await _reportRepository.GetByIdAsync(reportId);
+                if (report == null)
+                {
+                    return new BaseResponse<ReportResponseModel>
+                    {
+                        Code = 404,
+                        Success = false,
+                        Message = "Không tìm thấy báo cáo!",
+                        Data = null
+                    };
+                }
+
+                report.ReportStatus = model.ReportStatus;
+                if (!string.IsNullOrEmpty(model.ResolutionNotes))
+                {
+                    report.ReportDescription = report.ReportDescription + "\n\n--- GHI CHÚ GIẢI QUYẾT ---\n" + model.ResolutionNotes;
+                }
+
+                var updatedReport = await _reportRepository.UpdateAsync(report);
+                var response = await MapToReportResponseModel(updatedReport);
+
+                return new BaseResponse<ReportResponseModel>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Cập nhật trạng thái báo cáo thành công!",
+                    Data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in UpdateReportStatus: {Message}", ex.Message);
+                return new BaseResponse<ReportResponseModel>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<ReportStatisticsResponseModel>> GetReportStatisticsAsync()
+        {
+            try
+            {
+                var reports = await _reportRepository.GetAllAsync();
+                
+                var statistics = new ReportStatisticsResponseModel
+                {
+                    TotalReports = reports.Count(),
+                    PendingReports = reports.Count(r => r.ReportStatus == "Pending"),
+                    InProgressReports = reports.Count(r => r.ReportStatus == "In Progress"),
+                    ResolvedReports = reports.Count(r => r.ReportStatus == "Resolved"),
+                    ClosedReports = reports.Count(r => r.ReportStatus == "Closed")
+                };
+
+                var statusGroups = reports.GroupBy(r => r.ReportStatus)
+                    .Select(g => new ReportByStatusModel
+                    {
+                        Status = g.Key,
+                        Count = g.Count(),
+                        Percentage = (double)g.Count() / reports.Count() * 100
+                    }).ToList();
+                statistics.ReportsByStatus = statusGroups;
+
+                var monthGroups = reports.GroupBy(r => new { r.ReportCreateDate.Year, r.ReportCreateDate.Month })
+                    .Select(g => new ReportByMonthModel
+                    {
+                        Month = $"{g.Key.Year}-{g.Key.Month:D2}",
+                        Count = g.Count()
+                    }).OrderBy(x => x.Month).ToList();
+                statistics.ReportsByMonth = monthGroups;
+
+                return new BaseResponse<ReportStatisticsResponseModel>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy thống kê báo cáo thành công!",
+                    Data = statistics
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetReportStatistics: {Message}", ex.Message);
+                return new BaseResponse<ReportStatisticsResponseModel>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetReportsByUserAsync(Guid userId)
+        {
+            try
+            {
+                var reports = await _reportRepository.GetByUserIdAsync(userId);
+                
+                var reportResponses = new List<ReportResponseModel>();
+                foreach (var report in reports)
+                {
+                    var response = await MapToReportResponseModel(report);
+                    reportResponses.Add(response);
+                }
+
+                var result = new
+                {
+                    Reports = reportResponses,
+                    TotalCount = reportResponses.Count
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách báo cáo của người dùng thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetReportsByUser: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetReportsByRegistrationScheduleAsync(int registrationScheduleId)
+        {
+            try
+            {
+                var reports = await _reportRepository.GetByRegistrationScheduleIdAsync(registrationScheduleId);
+                
+                var reportResponses = new List<ReportResponseModel>();
+                foreach (var report in reports)
+                {
+                    var response = await MapToReportResponseModel(report);
+                    reportResponses.Add(response);
+                }
+
+                var result = new
+                {
+                    Reports = reportResponses,
+                    TotalCount = reportResponses.Count
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách báo cáo theo lịch thực hành thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetReportsByRegistrationSchedule: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetPendingIncidentsAsync()
+        {
+            try
+            {
+                var reports = await _reportRepository.GetAllAsync();
+                var pendingReports = reports.Where(r => 
+                    r.ReportStatus == "Pending" &&
+                    (r.ReportTitle.Contains("Chập mạch") ||
+                     r.ReportTitle.Contains("Thiết bị hỏng") ||
+                     r.ReportTitle.Contains("Tai nạn") ||
+                     r.ReportTitle.Contains("Sự cố") ||
+                     r.ReportTitle.Contains("Hỏng") ||
+                     r.ReportTitle.Contains("Lỗi"))
+                );
+                
+                var reportResponses = new List<ReportResponseModel>();
+                foreach (var report in pendingReports)
+                {
+                    var response = await MapToReportResponseModel(report);
+                    reportResponses.Add(response);
+                }
+
+                var result = new
+                {
+                    Incidents = reportResponses,
+                    TotalCount = reportResponses.Count
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách sự cố chờ xử lý thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetPendingIncidents: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<BaseResponse<object>> GetResolvedIncidentsAsync()
+        {
+            try
+            {
+                var reports = await _reportRepository.GetAllAsync();
+                var resolvedReports = reports.Where(r =>
+                    (r.ReportStatus == "Resolved" || r.ReportStatus == "Closed") &&
+                    (r.ReportTitle.Contains("Chập mạch") ||
+                     r.ReportTitle.Contains("Thiết bị hỏng") ||
+                     r.ReportTitle.Contains("Tai nạn") ||
+                     r.ReportTitle.Contains("Sự cố") ||
+                     r.ReportTitle.Contains("Hỏng") ||
+                     r.ReportTitle.Contains("Lỗi"))
+                );
+
+                var reportResponses = new List<ReportResponseModel>();
+                foreach (var report in resolvedReports)
+                {
+                    var response = await MapToReportResponseModel(report);
+                    reportResponses.Add(response);
+                }
+
+                var result = new
+                {
+                    Incidents = reportResponses,
+                    TotalCount = reportResponses.Count
+                };
+
+                return new BaseResponse<object>
+                {
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách sự cố đã giải quyết thành công!",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetResolvedIncidents: {Message}", ex.Message);
+                return new BaseResponse<object>
+                {
+                    Code = 500,
+                    Success = false,
+                    Message = "Lỗi hệ thống!",
+                };
+                }
+        }
+        private async Task<ReportResponseModel> MapToReportResponseModel(Report report)
+        {
+            var user = await _userRepository.GetUserById(report.UserId);
+            var registrationSchedule = report.RegistrationScheduleId.HasValue 
+                ? await _registrationScheduleRepository.GetRegistrationScheduleById(report.RegistrationScheduleId.Value) 
+                : null;
+            var classEntity = registrationSchedule != null ? await _classRepository.GetByIdAsync(registrationSchedule.ClassId) : null;
+            var subject = classEntity != null ? await _subjectRepository.GetSubjectById(classEntity.SubjectId) : null;
+            var slot = registrationSchedule?.Slot;
+
+            string scheduleName = "Unknown";
+            if (registrationSchedule != null && classEntity != null && slot != null)
+            {
+                scheduleName = $"Lab: {classEntity.ClassName} - {slot.SlotName} ({subject?.SubjectName ?? "Unknown"})";
+            }
+
+            return new ReportResponseModel
+            {
+                ReportId = report.ReportId,
+                UserId = report.UserId,
+                UserName = user?.UserFullName ?? "Unknown",
+              
+                RegistrationScheduleId = report.RegistrationScheduleId,
+                ScheduleName = scheduleName,
+                ReportTitle = report.ReportTitle,
+                ReportDescription = report.ReportDescription,
+                ReportCreateDate = report.ReportCreateDate,
+                ReportStatus = report.ReportStatus,
+                ResolutionNotes = report.ReportDescription?.Contains("--- GHI CHÚ GIẢI QUYẾT ---") == true 
+                    ? report.ReportDescription.Split("--- GHI CHÚ GIẢI QUYẾT ---").LastOrDefault()?.Trim()
+                    : null
+            };
+        }
+
+        private async Task<ReportDetailResponseModel> MapToReportDetailResponseModel(Report report)
+        {
+            var user = await _userRepository.GetUserById(report.UserId);
+            var registrationSchedule = report.RegistrationScheduleId.HasValue 
+                ? await _registrationScheduleRepository.GetRegistrationScheduleById(report.RegistrationScheduleId.Value) 
+                : null;
+            var classEntity = registrationSchedule != null ? await _classRepository.GetByIdAsync(registrationSchedule.ClassId) : null;
+            var subject = classEntity != null ? await _subjectRepository.GetSubjectById(classEntity.SubjectId) : null;
+            var slot = registrationSchedule?.Slot;
+            var teacher = registrationSchedule?.User;
+
+            string scheduleName = "Unknown";
+            if (registrationSchedule != null && classEntity != null && slot != null)
+            {
+                scheduleName = $"Lab: {classEntity.ClassName} - {slot.SlotName} ({subject?.SubjectName ?? "Unknown"})";
+            }
+
+            return new ReportDetailResponseModel
+            {
+                ReportId = report.ReportId,
+                UserId = report.UserId,
+                UserName = user?.UserFullName ?? "Unknown",
+                
+                RegistrationScheduleId = report.RegistrationScheduleId,
+                ScheduleName = scheduleName,
+                ReportTitle = report.ReportTitle,
+                ReportDescription = report.ReportDescription,
+                ReportCreateDate = report.ReportCreateDate,
+                ReportStatus = report.ReportStatus,
+                ResolutionNotes = report.ReportDescription?.Contains("--- GHI CHÚ GIẢI QUYẾT ---") == true 
+                    ? report.ReportDescription.Split("--- GHI CHÚ GIẢI QUYẾT ---").LastOrDefault()?.Trim()
+                    : null,
+                ClassName = classEntity?.ClassName ?? "Unknown",
+                SubjectName = subject?.SubjectName ?? "Unknown",
+                LecturerName = teacher?.UserFullName ?? "Unknown",
+                ScheduleDate = registrationSchedule?.RegistrationScheduleDate ?? DateTime.MinValue,
+                SlotName = slot?.SlotName ?? "Unknown",
+                SlotStartTime = slot?.SlotStartTime ?? "Unknown",
+                SlotEndTime = slot?.SlotEndTime ?? "Unknown"
+            };
+        }
+    }
+} 
