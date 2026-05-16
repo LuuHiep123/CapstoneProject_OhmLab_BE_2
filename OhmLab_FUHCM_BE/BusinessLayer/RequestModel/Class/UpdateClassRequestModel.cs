@@ -10,8 +10,7 @@ namespace BusinessLayer.RequestModel.Class
     public class UpdateClassRequestModel
     {
         [Required]
-        public int SubjectId { get; set; }
-
+        public int SemesterSubjectId { get; set; }
         public Guid? LecturerId { get; set; }
 
         public int? ScheduleTypeId { get; set; }

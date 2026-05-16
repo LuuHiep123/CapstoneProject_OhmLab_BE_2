@@ -36,7 +36,7 @@ namespace OhmLab_FUHCM_BE.Controller
         }
 
 
-        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer,Security")]
         [HttpPost("Search")]
         public async Task<IActionResult> GetAllRegistrationSchedule(GetAllRegistrationScheduleRequestModel model)
         {
@@ -81,7 +81,7 @@ namespace OhmLab_FUHCM_BE.Controller
             }
         }
 
-        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer,Security")]
         [HttpGet("RegistrationSchedule/{id}")]
         public async Task<IActionResult> GetRegistrationScheduleById(int id)
         {
@@ -142,7 +142,7 @@ namespace OhmLab_FUHCM_BE.Controller
 
         [Authorize(Roles = "Admin,HeadOfDepartment")]
         [HttpPost("Reject")]
-        public async Task<IActionResult> RejectRegistrationSchedule(AcceptRejectRegistrationScheduleRequestModel model)
+        public async Task<IActionResult> RejectRegistrationSchedule(RejectRegistrationScheduleModel model)
         {
             try
             {
@@ -155,13 +155,13 @@ namespace OhmLab_FUHCM_BE.Controller
             }
         }
 
-        [Authorize]
-        [HttpPost("CheckDupplicate")]
-        public async Task<IActionResult> CheckDupplicateRegistrationSchedule(CheckDupplicateRegitrationScheduleRequestModel model)
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [HttpPost("Cancel")]
+        public async Task<IActionResult> CancelRegistrationSchedule(CancelRegistrationScheduleModel model)
         {
             try
             {
-                var result = await _service.CheckDupplicateRegistrtionSchedule(model);
+                var result = await _service.CancelRegistrationSchedule(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
@@ -169,13 +169,14 @@ namespace OhmLab_FUHCM_BE.Controller
                 throw new Exception(ex.Message);
             }
         }
-        [Authorize]
-        [HttpPost("ListSlotEmptyByDate/{date}")]
-        public async Task<IActionResult> GetListSlotEmptyByDate(DateTime date)
+
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [HttpPost("lecturerCheckOut")]
+        public async Task<IActionResult> lecturerCheckOut(CheckOutRegistrationScheduleModel model)
         {
             try
             {
-                var result = await _service.GetSlotEmptyByDate(date);
+                var result = await _service.TeacherCheckoutSchedule(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
@@ -183,6 +184,35 @@ namespace OhmLab_FUHCM_BE.Controller
                 throw new Exception(ex.Message);
             }
         }
+
+        //[Authorize]
+        //[HttpPost("CheckDupplicate")]
+        //public async Task<IActionResult> CheckDupplicateRegistrationSchedule(CheckDupplicateRegitrationScheduleRequestModel model)
+        //{
+        //    try
+        //    {
+        //        var result = await _service.CheckDupplicateRegistrtionSchedule(model);
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+        //[Authorize]
+        //[HttpPost("ListSlotEmptyByDate/{date}")]
+        //public async Task<IActionResult> GetListSlotEmptyByDate(DateTime date)
+        //{
+        //    try
+        //    {
+        //        var result = await _service.GetSlotEmptyByDate(date);
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
 
     }
 }

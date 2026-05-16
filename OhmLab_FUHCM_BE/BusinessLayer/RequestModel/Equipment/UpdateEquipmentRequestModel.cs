@@ -10,6 +10,7 @@ namespace BusinessLayer.RequestModel.Equipment
     {
         public string? EquipmentName { get; set; }
         public string? EquipmentCode { get; set; }
+        public int? RoomId { get; set; }
         public string? EquipmentNumberSerial { get; set; }
         public string? EquipmentDescription { get; set; }
         public string? EquipmentTypeUrlImg { get; set; }

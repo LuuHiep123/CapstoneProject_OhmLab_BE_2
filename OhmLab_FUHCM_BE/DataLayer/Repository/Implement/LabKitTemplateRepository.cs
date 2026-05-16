@@ -7,9 +7,9 @@ namespace DataLayer.Repository.Implement
 {
     public class LabKitTemplateRepository : ILabKitTemplateRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public LabKitTemplateRepository(db_abadcb_ohmlabContext context)
+        public LabKitTemplateRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

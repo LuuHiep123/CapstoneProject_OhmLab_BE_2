@@ -24,19 +24,6 @@ namespace BusinessLayer.Service
         Task<DynamicResponse<ReportResponseModel>> GetReportsByRegistrationScheduleAsync(int registrationScheduleId);
         Task<DynamicResponse<ReportResponseModel>> GetReportsByLabAsync(int labId);
 
-        // Grade management
-        Task<BaseResponse<GradeResponseModel>> GradePracticeReportAsync(Grade grade);
-        Task<BaseResponse<GradeResponseModel>> UpdateGradeAsync(int gradeId, Grade grade);
-        Task<BaseResponse<GradeResponseModel>> GetGradeByIdAsync(int gradeId);
-        Task<DynamicResponse<GradeResponseModel>> GetGradesByLabAsync(int labId);
-        Task<DynamicResponse<GradeResponseModel>> GetGradesByStudentAsync(Guid studentId);
-        Task<DynamicResponse<ReportResponseModel>> GetUngradedReportsAsync();
-        Task<BaseResponse<GradeResponseModel>> SubmitAssignmentAsync(Grade grade);
-
-        // Status and feedback
-        Task<BaseResponse<ReportResponseModel>> UpdateReportStatusAsync(int reportId, string status);
-        Task<BaseResponse<GradeResponseModel>> AddFeedbackToGradeAsync(int gradeId, string feedback);
-        Task<DynamicResponse<GradeResponseModel>> GetGradesWithFeedbackAsync(int labId);
 
         // Statistics
         Task<BaseResponse<object>> GetLabStatisticsAsync(int labId);

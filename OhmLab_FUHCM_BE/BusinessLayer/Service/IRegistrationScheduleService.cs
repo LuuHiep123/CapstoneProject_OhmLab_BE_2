@@ -20,10 +20,12 @@ namespace BusinessLayer.Service
         Task<DynamicResponse<RegistrationScheduleAllResponseModel>> GetAllRegistrationSchedule(GetAllRegistrationScheduleRequestModel model);
         Task<BaseResponse<List<RegistrationScheduleAllResponseModel>>> GetAllRegistrationScheduleByTeacherId(Guid teacherId);
         Task<BaseResponse<RegistrationScheduleAllResponseModel>> GetRegistrationScheduleById(int id);
+        Task<BaseResponse<RegistrationScheduleAllResponseModel>> CancelRegistrationSchedule(CancelRegistrationScheduleModel model);
         Task<BaseResponse<List<RegistrationScheduleAllResponseModel>>> GetRegistrationScheduleByStudentId(Guid studentId);
+        Task<BaseResponse> TeacherCheckoutSchedule(CheckOutRegistrationScheduleModel model);
         Task<BaseResponse<RegistrationScheduleAllResponseModel>> AcceptRegistrtionSchedule(AcceptRejectRegistrationScheduleRequestModel model);
-        Task<BaseResponse<RegistrationScheduleAllResponseModel>> RejectRegistrtionSchedule(AcceptRejectRegistrationScheduleRequestModel model);
-        Task<BaseResponse<RegistrationScheduleAllResponseModel>> CheckDupplicateRegistrtionSchedule(CheckDupplicateRegitrationScheduleRequestModel model);
-        Task<BaseResponse<List<SlotResponseModel>>> GetSlotEmptyByDate(DateTime date);
+        Task<BaseResponse<RegistrationScheduleAllResponseModel>> RejectRegistrtionSchedule(RejectRegistrationScheduleModel model);
+        //Task<BaseResponse<RegistrationScheduleAllResponseModel>> CheckDupplicateRegistrtionSchedule(CheckDupplicateRegitrationScheduleRequestModel model);
+        //Task<BaseResponse<List<SlotResponseModel>>> GetSlotEmptyByDate(DateTime date);
     }
 }

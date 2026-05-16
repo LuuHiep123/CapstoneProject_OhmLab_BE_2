@@ -5,7 +5,7 @@ namespace BusinessLayer.RequestModel.Class
 {
     public class CreateClassRequestModel
     {
-        public int SubjectId { get; set; }
+        public int SemesterSubjectId { get; set; }
 
         public Guid? LecturerId { get; set; }
 

@@ -11,19 +11,39 @@ namespace DataLayer.Repository.Implement
 {
     public class SemesterSubjectRepository : ISemesterSubjectRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public SemesterSubjectRepository(db_abadcb_ohmlabContext OhmLab_DBContext)
+        public SemesterSubjectRepository(DBContext.db_abadcb_ohmlabContext OhmLab_DBContext)
         {
             _DBContext = OhmLab_DBContext;
         }
 
-        public async Task<SemesterSubject> GetBySubjectIdAsync(int subjectId)
+        public async Task<List<SemesterSubject>> GetBySubjectIdAsync(int subjectId)
         {
             try
             {
                 return await _DBContext.SemesterSubjects
-                    .FirstOrDefaultAsync(ss => ss.SubjectId == subjectId && ss.SemesterSubject1.ToLower().Equals("valid"));
+                    .Include(ss => ss.Subject)
+                    .Include(ss => ss.Semester)
+                    .Where(ss => ss.SubjectId == subjectId && ss.SemesterSubject1.ToLower().Equals("valid"))
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR][GetBySubjectIdAsync] {ex.Message} | Inner: {ex.InnerException?.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<SemesterSubject>> GetBySemesterIdAsync(int semesterId)
+        {
+            try
+            {
+                return await _DBContext.SemesterSubjects
+                    .Include(ss => ss.Subject)
+                    .Include(ss => ss.Semester)
+                    .Where(ss => ss.SemesterId == semesterId && ss.SemesterSubject1.ToLower().Equals("valid"))
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -37,7 +57,8 @@ namespace DataLayer.Repository.Implement
             try
             {
                 return await _DBContext.SemesterSubjects
-                    .Where(ss => ss.SemesterSubject1.ToLower().Equals("valid"))
+                    .Include(ss => ss.Subject)
+                    .Include(ss => ss.Semester)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -61,5 +82,56 @@ namespace DataLayer.Repository.Implement
                 throw;
             }
         }
+
+        public async Task<SemesterSubject> GetBySemesterIdAngSubjectIdAsync(int subjectId, int semeterid)
+        {
+            try
+            {
+                return await _DBContext.SemesterSubjects
+                    .Include(ss => ss.Subject)
+                    .Include(ss => ss.Semester)
+                    .FirstOrDefaultAsync(ss => ss.SubjectId == subjectId && ss.SemesterId == semeterid);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR][AddAsync] {ex.Message} | Inner: {ex.InnerException?.Message}");
+                throw;
+            }
+        }
+
+        public async Task<SemesterSubject> GetByIdAsync(int sesmerterSubjectId)
+        {
+            try
+            {
+                return await _DBContext.SemesterSubjects
+                    .Include(ss => ss.Subject)
+                    .Include(ss => ss.Semester)
+                    .FirstOrDefaultAsync(ss => ss.SemesterSubjectId == sesmerterSubjectId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR][AddAsync] {ex.Message} | Inner: {ex.InnerException?.Message}");
+                throw;
+            }
+        }
+
+
+        public async Task<SemesterSubject> UpdateSemesterSubjectAsync(SemesterSubject semesterSubject)
+        {
+            try
+            {
+                _DBContext.SemesterSubjects
+                    .Update(semesterSubject);
+                await _DBContext.SaveChangesAsync();
+                return semesterSubject;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR][AddAsync] {ex.Message} | Inner: {ex.InnerException?.Message}");
+                throw;
+            }
+        }
+
+
     }
 }

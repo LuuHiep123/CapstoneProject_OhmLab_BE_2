@@ -8,12 +8,13 @@ namespace BusinessLayer.RequestModel.RegistrationSchedule
 {
     public class CreateRegistrationScheduleRequestModel
     {
-        public string RegistrationScheduleName { get; set; } = null!;
-        public Guid TeacherId { get; set; }
+        public string RegistraionScheduleName { get; set; } = null!;
+        public Guid TeaacherId { get; set; }
         public int ClassId { get; set; }
+        public int RoomId { get; set; }
         public int LabId { get; set; }
         public int SlotId { get; set; }
-        public DateTime RegistrationScheduleDate { get; set; }
-        public string? RegistrationScheduleDescription { get; set; }
+        public DateTime RegistraionScheduleDate { get; set; }
+        public string? RegistraionScheduleDescription { get; set; }
     }
 }

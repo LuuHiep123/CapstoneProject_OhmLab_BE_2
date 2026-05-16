@@ -12,8 +12,8 @@ namespace DataLayer.Repository.Implement
     public class KitAccessoryRepository : IKitAccessoryRepository
     {
 
-        private readonly db_abadcb_ohmlabContext _context;
-        public KitAccessoryRepository(db_abadcb_ohmlabContext context)
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
+        public KitAccessoryRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

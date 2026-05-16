@@ -11,8 +11,8 @@ namespace DataLayer.Repository.Implement
 {
     public class AccessoryRepository : IAccessoryRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
-        public AccessoryRepository(db_abadcb_ohmlabContext context)
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
+        public AccessoryRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

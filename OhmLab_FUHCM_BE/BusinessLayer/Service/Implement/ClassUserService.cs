@@ -81,7 +81,8 @@ namespace BusinessLayer.Service.Implement
                 var classUser = new ClassUser
                 {
                     ClassId = classId,
-                    UserId = userId
+                    UserId = userId,
+                    ClassUserStatus = "Active"
                 };
 
                 var result = await _classUserRepository.CreateAsync(classUser);

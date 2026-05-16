@@ -21,7 +21,7 @@ namespace OhmLab_FUHCM_BE.Controller
         }
 
         // --- Tạo báo cáo (Student/Lecturer) ---
-        [Authorize(Roles = "Student,Lecturer")]
+        [Authorize(Roles = "Student,Lecturer,Admin,HeadOfDepartment")]
         [HttpPost]
         public async Task<IActionResult> CreateReport([FromBody] CreateReportRequestModel model)
         {
@@ -46,50 +46,50 @@ namespace OhmLab_FUHCM_BE.Controller
         // --- Form helpers cho tạo report (hôm nay) ---
 
         // Lấy danh sách slot có lịch học hôm nay
-        [Authorize(Roles = "Student,Lecturer")]
-        [HttpGet("today-slots")]
-        public async Task<IActionResult> GetTodaySlots()
-        {
-            try
-            {
-                var userId = GetCurrentUserId();
-                if (userId == Guid.Empty)
-                {
-                    return Unauthorized(new { Code = 401, Success = false, Message = "Không xác định được người dùng!" });
-                }
+        //[Authorize(Roles = "Student,Lecturer")]
+        //[HttpGet("today-slots")]
+        //public async Task<IActionResult> GetTodaySlots()
+        //{
+        //    try
+        //    {
+        //        var userId = GetCurrentUserId();
+        //        if (userId == Guid.Empty)
+        //        {
+        //            return Unauthorized(new { Code = 401, Success = false, Message = "Không xác định được người dùng!" });
+        //        }
 
-                var result = await _reportService.GetTodaySlotsAsync(userId);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetTodaySlots: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //        var result = await _reportService.GetTodaySlotsAsync(userId);
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetTodaySlots: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         // Lấy danh sách lớp theo slot hôm nay
-        [Authorize(Roles = "Student,Lecturer")]
-        [HttpGet("today-classes")]
-        public async Task<IActionResult> GetTodayClasses([FromQuery] string slotName)
-        {
-            try
-            {
-                var userId = GetCurrentUserId();
-                if (userId == Guid.Empty)
-                {
-                    return Unauthorized(new { Code = 401, Success = false, Message = "Không xác định được người dùng!" });
-                }
+        //[Authorize(Roles = "Student,Lecturer")]
+        //[HttpGet("today-classes")]
+        //public async Task<IActionResult> GetTodayClasses([FromQuery] string slotName)
+        //{
+        //    try
+        //    {
+        //        var userId = GetCurrentUserId();
+        //        if (userId == Guid.Empty)
+        //        {
+        //            return Unauthorized(new { Code = 401, Success = false, Message = "Không xác định được người dùng!" });
+        //        }
 
-                var result = await _reportService.GetTodayClassesAsync(userId, slotName);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetTodayClasses: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //        var result = await _reportService.GetTodayClassesAsync(userId, slotName);
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetTodayClasses: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         // --- Xem báo cáo theo ID ---
         [Authorize]
@@ -109,30 +109,30 @@ namespace OhmLab_FUHCM_BE.Controller
         }
 
         // --- Xem chi tiết báo cáo ---
-        [Authorize]
-        [HttpGet("{id}/detail")]
-        public async Task<IActionResult> GetReportDetail(int id)
-        {
-            try
-            {
-                var result = await _reportService.GetReportDetailAsync(id);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetReportDetail: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //[Authorize]
+        //[HttpGet("{id}/detail")]
+        //public async Task<IActionResult> GetReportDetail(int id)
+        //{
+        //    try
+        //    {
+        //        var result = await _reportService.GetReportDetailAsync(id);
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetReportDetail: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         // --- Lấy tất cả báo cáo (Admin/HeadOfDepartment) ---
         [Authorize(Roles = "Admin,HeadOfDepartment")]
-        [HttpGet]
-        public async Task<IActionResult> GetAllReports()
+        [HttpPost("Search")]
+        public async Task<IActionResult> GetAllReports(GetAllReportRequestModel model)
         {
             try
             {
-                var result = await _reportService.GetAllReportsAsync();
+                var result = await _reportService.GetAllReportsAsync(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
@@ -144,12 +144,12 @@ namespace OhmLab_FUHCM_BE.Controller
 
         // --- Cập nhật trạng thái báo cáo (Admin/HeadOfDepartment) ---
         [Authorize(Roles = "Admin,HeadOfDepartment")]
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateReportStatus(int id, [FromBody] UpdateReportStatusRequestModel model)
+        [HttpPut("resolvereport")]
+        public async Task<IActionResult> ResolveReport(AcceptReportRequestModel model)
         {
             try
             {
-                var result = await _reportService.UpdateReportStatusAsync(id, model);
+                var result = await _reportService.AcceptReportAsync(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
@@ -159,25 +159,25 @@ namespace OhmLab_FUHCM_BE.Controller
             }
         }
 
-        // --- Thống kê báo cáo (Admin/HeadOfDepartment) ---
-        [Authorize(Roles = "Admin,HeadOfDepartment")]
-        [HttpGet("statistics")]
-        public async Task<IActionResult> GetReportStatistics()
-        {
-            try
-            {
-                var result = await _reportService.GetReportStatisticsAsync();
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetReportStatistics: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //// --- Thống kê báo cáo (Admin/HeadOfDepartment) ---
+        //[Authorize(Roles = "Admin,HeadOfDepartment")]
+        //[HttpGet("statistics")]
+        //public async Task<IActionResult> GetReportStatistics()
+        //{
+        //    try
+        //    {
+        //        var result = await _reportService.GetReportStatisticsAsync();
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetReportStatistics: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         // --- Báo cáo theo người dùng ---
-        [Authorize]
+        [Authorize(Roles = "Admin,HeadOfDepartment")]
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetReportsByUser(Guid userId)
         {
@@ -203,21 +203,21 @@ namespace OhmLab_FUHCM_BE.Controller
         }
 
         // --- Báo cáo theo lịch học ---
-        [Authorize]
-        [HttpGet("schedule/{registrationScheduleId}")]
-        public async Task<IActionResult> GetReportsByRegistrationSchedule(int registrationScheduleId)
-        {
-            try
-            {
-                var result = await _reportService.GetReportsByRegistrationScheduleAsync(registrationScheduleId);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetReportsByRegistrationSchedule: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //[Authorize]
+        //[HttpGet("schedule/{registrationScheduleId}")]
+        //public async Task<IActionResult> GetReportsByRegistrationSchedule(int registrationScheduleId)
+        //{
+        //    try
+        //    {
+        //        var result = await _reportService.GetReportsByRegistrationScheduleAsync(registrationScheduleId);
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetReportsByRegistrationSchedule: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         // --- Báo cáo của tôi (Student/Lecturer) ---
         [Authorize(Roles = "Student,Lecturer")]
@@ -243,38 +243,38 @@ namespace OhmLab_FUHCM_BE.Controller
         }
 
         // --- Sự cố chờ xử lý (Admin/HeadOfDepartment) ---
-        [Authorize(Roles = "Admin,HeadOfDepartment")]
-        [HttpGet("pending")]
-        public async Task<IActionResult> GetPendingIncidents()
-        {
-            try
-            {
-                var result = await _reportService.GetPendingIncidentsAsync();
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetPendingIncidents: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //[Authorize(Roles = "Admin,HeadOfDepartment")]
+        //[HttpGet("pending")]
+        //public async Task<IActionResult> GetPendingIncidents()
+        //{
+        //    try
+        //    {
+        //        var result = await _reportService.GetPendingIncidentsAsync();
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetPendingIncidents: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         // --- Sự cố đã giải quyết (Admin/HeadOfDepartment) ---
-        [Authorize(Roles = "Admin,HeadOfDepartment")]
-        [HttpGet("resolved")]
-        public async Task<IActionResult> GetResolvedIncidents()
-        {
-            try
-            {
-                var result = await _reportService.GetResolvedIncidentsAsync();
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetResolvedIncidents: {Message}", ex.Message);
-                return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
-            }
-        }
+        //[Authorize(Roles = "Admin,HeadOfDepartment")]
+        //[HttpGet("resolved")]
+        //public async Task<IActionResult> GetResolvedIncidents()
+        //{
+        //    try
+        //    {
+        //        var result = await _reportService.GetResolvedIncidentsAsync();
+        //        return StatusCode(result.Code, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error in GetResolvedIncidents: {Message}", ex.Message);
+        //        return StatusCode(500, new { Code = 500, Success = false, Message = "Lỗi hệ thống!" });
+        //    }
+        //}
 
         private Guid GetCurrentUserId()
         {

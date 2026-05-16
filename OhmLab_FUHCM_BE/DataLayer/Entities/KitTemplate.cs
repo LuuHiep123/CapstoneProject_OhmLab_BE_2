@@ -8,6 +8,7 @@ namespace DataLayer.Entities
         public KitTemplate()
         {
             AccessoryKitTemplates = new HashSet<AccessoryKitTemplate>();
+            KitTemplateRooms = new HashSet<KitTemplateRoom>();
             Kits = new HashSet<Kit>();
             LabKitTemplates = new HashSet<LabKitTemplate>();
         }
@@ -20,6 +21,7 @@ namespace DataLayer.Entities
         public string KitTemplateStatus { get; set; } = null!;
 
         public virtual ICollection<AccessoryKitTemplate> AccessoryKitTemplates { get; set; }
+        public virtual ICollection<KitTemplateRoom> KitTemplateRooms { get; set; }
         public virtual ICollection<Kit> Kits { get; set; }
         public virtual ICollection<LabKitTemplate> LabKitTemplates { get; set; }
     }

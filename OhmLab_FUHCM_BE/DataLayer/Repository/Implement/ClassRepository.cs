@@ -18,9 +18,10 @@ namespace DataLayer.Repository.Implement
         public async Task<Class> GetByIdAsync(int id)
         {
             return await _DBContext.Classes
-                .Include(c => c.Subject)
-                    .ThenInclude(s => s.SemesterSubjects)
-                        .ThenInclude(ss => ss.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Subject)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Semester)
                 .Include(c => c.Lecturer)
                 .Include(c => c.ScheduleType)
                     .ThenInclude(st => st.Slot)
@@ -34,9 +35,10 @@ namespace DataLayer.Repository.Implement
         public async Task<List<Class>> GetByLecturerIdAsync(Guid lecturerId)
         {
             return await _DBContext.Classes
-                .Include(c => c.Subject)
-                    .ThenInclude(s => s.SemesterSubjects)
-                        .ThenInclude(ss => ss.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Subject)
                 .Include(c => c.Lecturer)
                 .Include(c => c.ScheduleType)
                     .ThenInclude(st => st.Slot)
@@ -51,9 +53,10 @@ namespace DataLayer.Repository.Implement
         public async Task<List<Class>> GetByStudentIdAsync(Guid studentId)
         {
             return await _DBContext.Classes
-                .Include(c => c.Subject)
-                    .ThenInclude(s => s.SemesterSubjects)
-                        .ThenInclude(ss => ss.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Subject)
                 .Include(c => c.Lecturer)
                 .Include(c => c.ScheduleType)
                     .ThenInclude(st => st.Slot)
@@ -68,9 +71,10 @@ namespace DataLayer.Repository.Implement
         public async Task<List<Class>> GetAllAsync()
         {
             return await _DBContext.Classes
-                .Include(c => c.Subject)
-                    .ThenInclude(s => s.SemesterSubjects)
-                        .ThenInclude(ss => ss.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Semester)
+                .Include(c => c.SemesterSubject)
+                    .ThenInclude(s => s.Subject)
                 .Include(c => c.Lecturer)
                 .Include(c => c.ScheduleType)
                     .ThenInclude(st => st.Slot)

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QptoqS2y3PA=",
+  "dgSpecHash": "S/4hzFzBigE=",
   "success": true,
-  "projectFilePath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\OhmLab_FUHCM_BE\\OhmLab_FUHCM_BE.csproj",
+  "projectFilePath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\OhmLab_FUHCM_BE\\OhmLab_FUHCM_BE.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

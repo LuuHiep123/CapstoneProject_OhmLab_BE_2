@@ -46,7 +46,8 @@ namespace OhmLab_FUHCM_BE.AppStarts
                 provider.GetRequiredService<IMapper>()
             ));
             services.AddScoped<IEquipmentService, EquipmentService>();
-            services.AddScoped<IAssignmentService, AssignmentService>();
+            services.AddScoped<IRoomService, RoomService>();
+            //services.AddScoped<IAssignmentService, AssignmentService>();
             services.AddScoped<ISemesterRepository, SemesterRepository>();
             services.AddScoped<ISemesterService, SemesterService>();          
             services.AddScoped<ITeamEquipmentService, TeamEquipmentService>();
@@ -58,7 +59,9 @@ namespace OhmLab_FUHCM_BE.AppStarts
                 provider.GetRequiredService<IClassUserRepository>()
             ));
             services.AddScoped<IKitTemplateService, KitTemplateService>();
+            services.AddScoped<ISemesterSubjectService, SemesterSubjectService>();
             services.AddScoped<IKitService, KitService>();
+            services.AddScoped<IsecurityService, SecurityService>();
             services.AddScoped<IRegistrationScheduleService, RegistrationScheduleService>();
             services.AddScoped<IClassService>(provider => new ClassService(
                 provider.GetRequiredService<IScheduleRepository>(),
@@ -84,45 +87,47 @@ namespace OhmLab_FUHCM_BE.AppStarts
             services.AddScoped<IGradeService, GradeService>();
             services.AddScoped<IAccessoryKitTemplateService, AccessoryKitTemplateService>();
             services.AddScoped<IKitAccessoryService, KitAccessoryService>();
-            services.AddScoped<IAnalyticsService>(provider => new AnalyticsService(
-                provider.GetRequiredService<IScheduleRepository>(),
-                provider.GetRequiredService<IClassRepository>(),
-                provider.GetRequiredService<IUserRepository>(),
-                provider.GetRequiredService<IEquipmentRepository>(),
-                provider.GetRequiredService<IReportRepository>(),
-                provider.GetRequiredService<ISemesterRepository>(),
-                provider.GetRequiredService<ILogger<AnalyticsService>>()
-            ));
+            //           services.AddScoped<IAnalyticsService>(provider => new AnalyticsService(
+            //               provider.GetRequiredService<IScheduleRepository>(),
+            //               provider.GetRequiredService<IClassRepository>(),
+            //               provider.GetRequiredService<IUserRepository>(),
+            //               provider.GetRequiredService<IEquipmentRepository>(),
+            //               provider.GetRequiredService<IReportRepository>(),
+            //               provider.GetRequiredService<ISemesterRepository>(),
+            //               provider.GetRequiredService<ILogger<AnalyticsService>>()
+            //           ));
             services.AddScoped<ITeamKitService, TeamKitService>();
-            services.AddScoped<IHeadOfDepartmentService>(provider => new HeadOfDepartmentService(
-     provider.GetRequiredService<IClassRepository>(),
-     provider.GetRequiredService<IEquipmentRepository>(),  
-     provider.GetRequiredService<ITeamRepository>(),       
-     provider.GetRequiredService<IUserRepository>(),
-     provider.GetRequiredService<IScheduleRepository>(),
-     provider.GetRequiredService<ISubjectRepository>(),
-     provider.GetRequiredService<ILabRepository>(),
-     provider.GetRequiredService<ISemesterRepository>(),
-     provider.GetRequiredService<IEquipmentTypeRepository>(),
-     provider.GetRequiredService<IKitTemplateRepository>(),
-     provider.GetRequiredService<IMapper>(),
-     provider.GetRequiredService<ILogger<HeadOfDepartmentService>>()
- ));
+            //           services.AddScoped<IHeadOfDepartmentService>(provider => new HeadOfDepartmentService(
+            //    provider.GetRequiredService<IClassRepository>(),
+            //    provider.GetRequiredService<IEquipmentRepository>(),  
+            //    provider.GetRequiredService<ITeamRepository>(),       
+            //    provider.GetRequiredService<IUserRepository>(),
+            //    provider.GetRequiredService<IScheduleRepository>(),
+            //    provider.GetRequiredService<ISubjectRepository>(),
+            //    provider.GetRequiredService<ILabRepository>(),
+            //    provider.GetRequiredService<ISemesterRepository>(),
+            //    provider.GetRequiredService<IEquipmentTypeRepository>(),
+            //    provider.GetRequiredService<IKitTemplateRepository>(),
+            //    provider.GetRequiredService<IMapper>(),
+            //    provider.GetRequiredService<ILogger<HeadOfDepartmentService>>()
+            //));
 
 
-            services.AddScoped<IStudentDashboardService>(provider => new StudentDashboardService(
-                provider.GetRequiredService<IClassUserRepository>(),
-                provider.GetRequiredService<IScheduleRepository>(),
-                provider.GetRequiredService<IGradeRepository>(),
-                provider.GetRequiredService<IReportRepository>(),
-                provider.GetRequiredService<ILabRepository>(),
-                provider.GetRequiredService<IEquipmentTypeRepository>(),
-                provider.GetRequiredService<IKitTemplateRepository>(),
-                provider.GetRequiredService<ITeamRepository>(),
-                provider.GetRequiredService<ITeamUserRepository>(),
-                provider.GetRequiredService<IUserRepository>(),
-                provider.GetRequiredService<IMapper>()
-            ));
+            //services.AddScoped<IStudentDashboardService>(provider => new StudentDashboardService(
+            //    provider.GetRequiredService<IClassUserRepository>(),
+            //    provider.GetRequiredService<IScheduleRepository>(),
+            //    provider.GetRequiredService<IGradeRepository>(),
+            //    provider.GetRequiredService<IReportRepository>(),
+            //    provider.GetRequiredService<ILabRepository>(),
+            //    provider.GetRequiredService<IEquipmentTypeRepository>(),
+            //    provider.GetRequiredService<IKitTemplateRepository>(),
+            //    provider.GetRequiredService<ITeamRepository>(),
+            //    provider.GetRequiredService<ITeamUserRepository>(),
+            //    provider.GetRequiredService<IUserRepository>(),
+            //    provider.GetRequiredService<IMapper>()
+            //));
+            services.AddScoped<IAccessoryService, AccessoryService>();
+            services.AddScoped<IGradeDescriptionService, GradeDescriptionService>();
 
 
             //AddRepository
@@ -152,6 +157,8 @@ namespace OhmLab_FUHCM_BE.AppStarts
             services.AddScoped<IRegistrationScheduleRepository, RegistrationScheduleRepository>();
             services.AddScoped<IAccessoryRepository, AccessoryRepository>();
             services.AddScoped<IAccessoryKitTemplateRepository, AccessoryKittemplateRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IGradeDescriptionRepository, GradeDescriptionRepository>();
         }
     }
 }

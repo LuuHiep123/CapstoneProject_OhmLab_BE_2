@@ -7,14 +7,16 @@ namespace BusinessLayer.ResponseModel.Report
         public int ReportId { get; set; }
         public Guid UserId { get; set; }
         public string UserName { get; set; } = null!;
-       
-        public int? RegistrationScheduleId { get; set; }
-        public string ScheduleName { get; set; } = null!;
+        public int RegistrationScheduleId { get; set; }
+        public string RegistrationScheduleName { get; set; } = null!;
+        public string EquipmentId { get; set; } = null!;
+        public string EquipmentName { get; set; } = null!;
         public string ReportTitle { get; set; } = null!;
-        public string? ReportDescription { get; set; }
+        public string ReportDescription { get; set; }
+        public string ReportNote { get; set; }
+        public string Url_Img { get; set; }
         public DateTime ReportCreateDate { get; set; }
         public string ReportStatus { get; set; } = null!;
-        public string? ResolutionNotes { get; set; }
     }
 
     public class ReportDetailResponseModel : ReportResponseModel

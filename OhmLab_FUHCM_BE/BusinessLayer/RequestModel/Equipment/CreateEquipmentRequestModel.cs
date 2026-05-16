@@ -9,6 +9,7 @@ namespace BusinessLayer.RequestModel.Equipment
     public class CreateEquipmentRequestModel
     {
         public string EquipmentTypeId { get; set; } = null!;
+        public int? RoomId { get; set; }
         public string EquipmentName { get; set; } = null!;
         public string EquipmentNumberSerial { get; set; } = null!;
         public string? EquipmentDescription { get; set; }

@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class TeamUserRepository : ITeamUserRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public TeamUserRepository(db_abadcb_ohmlabContext context)
+        public TeamUserRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _DBContext = context;
         }

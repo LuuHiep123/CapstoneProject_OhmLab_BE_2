@@ -74,20 +74,20 @@ namespace OhmLab_FUHCM_BE.Controller
             return StatusCode(result.Code, result);
         }
 
-        [Authorize(Roles = "Admin,HeadOfDepartment")]
-        [HttpPost("AddScheduleForClass")]
-        public async Task<IActionResult> AddScheduleforClass([FromBody] AddScheduleForClassRequestModel model)
-        {
-            var result = await _classService.AddScheduleForClassAsync(model);
-            return StatusCode(result.Code, result);
-        }
+        //[Authorize(Roles = "Admin,HeadOfDepartment")]
+        //[HttpPost("AddScheduleForClass")]
+        //public async Task<IActionResult> AddScheduleforClass([FromBody] AddScheduleForClassRequestModel model)
+        //{
+        //    var result = await _classService.AddScheduleForClassAsync(model);
+        //    return StatusCode(result.Code, result);
+        //}
 
-        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
-        [HttpGet("{classId}/labs")]
-        public async Task<IActionResult> GetLabsByClassId(int classId)
-        {
-            var result = await _classService.GetLabsByClassIdAsync(classId);
-            return StatusCode(result.Code, result);
-        }
+        //[Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        //[HttpGet("{classId}/labs")]
+        //public async Task<IActionResult> GetLabsByClassId(int classId)
+        //{
+        //    var result = await _classService.GetLabsByClassIdAsync(classId);
+        //    return StatusCode(result.Code, result);
+        //}
     }
 } 

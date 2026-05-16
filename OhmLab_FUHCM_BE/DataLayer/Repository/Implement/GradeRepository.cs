@@ -7,22 +7,26 @@ namespace DataLayer.Repository.Implement
 {
     public class GradeRepository : IGradeRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public GradeRepository(db_abadcb_ohmlabContext OhmLab_DBContext)
+        public GradeRepository(DBContext.db_abadcb_ohmlabContext OhmLab_DBContext)
         {
             _DBContext = OhmLab_DBContext;
         }
 
-        public async Task<IEnumerable<Grade>> GetAllAsync()
+        public async Task<List<Grade>> GetAllAsync()
         {
             try
             {
                 return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Include(g => g.Lab)
+                    .Include(g => g.Teacher)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Class)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Lab)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Slot)
                     .Include(g => g.Team)
-                    .AsSplitQuery() // Use split query for better performance
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -36,8 +40,13 @@ namespace DataLayer.Repository.Implement
             try
             {
                 return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Include(g => g.Lab)
+                    .Include(g => g.Teacher)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Class)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Lab)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Slot)
                     .Include(g => g.Team)
                     .AsSplitQuery() // Use split query for better performance
                     .FirstOrDefaultAsync(g => g.GradeId == id);
@@ -48,15 +57,20 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<IEnumerable<Grade>> GetByUserIdAsync(Guid userId)
+        public async Task<List<Grade>> GetByUserIdAsync(Guid userId)
         {
             try
             {
                 return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Include(g => g.Lab)
+                    .Include(g => g.Teacher)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Class)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Lab)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Slot)
                     .Include(g => g.Team)
-                    .Where(g => g.UserId == userId)
+                    .Where(g => g.TeacherId == userId)
                     .AsSplitQuery() // Use split query for better performance
                     .ToListAsync();
             }
@@ -66,31 +80,39 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<IEnumerable<Grade>> GetByLabIdAsync(int labId)
-        {
-            try
-            {
-                return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Include(g => g.Lab)
-                    .Include(g => g.Team)
-                    .Where(g => g.LabId == labId)
-                    .AsSplitQuery() // Use split query for better performance
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //public async Task<IEnumerable<Grade>> GetByLabIdAsync(int labId)
+        //{
+        //    try
+        //    {
+        //        return await _DBContext.Grades
+        //            .Include(g => g.Teacher)
+        //            .Include(g => g.RegistraionSchedule)
+        //                .ThenInclude(rs => rs.ClassId)
+        //            .Include(g => g.RegistraionSchedule)
+        //                .ThenInclude(rs => rs.LabId)
+        //            .Include(g => g.Team)   
+        //            .Where(g => g.LabId == labId)
+        //            .AsSplitQuery() // Use split query for better performance
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        public async Task<IEnumerable<Grade>> GetByTeamIdAsync(int teamId)
+        public async Task<List<Grade>> GetByTeamIdAsync(int teamId)
         {
             try
             {
                 return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Include(g => g.Lab)
+                    .Include(g => g.Teacher)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Class)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Lab)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Slot)
                     .Include(g => g.Team)
                     .Where(g => g.TeamId == teamId)
                     .AsSplitQuery() // Use split query for better performance
@@ -102,13 +124,18 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<IEnumerable<Grade>> GetByStatusAsync(string status)
+        public async Task<List<Grade>> GetByStatusAsync(string status)
         {
             try
             {
                 return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Include(g => g.Lab)
+                    .Include(g => g.Teacher)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Class)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Lab)
+                    .Include(g => g.RegistraionSchedule)
+                        .ThenInclude(rs => rs.Slot)
                     .Include(g => g.Team)
                     .Where(g => g.GradeStatus == status)
                     .AsSplitQuery() // Use split query for better performance
@@ -172,71 +199,71 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<decimal> GetAverageScoreByLabAsync(int labId)
-        {
-            try
-            {
-                var grades = await _DBContext.Grades
-                    .Where(g => g.LabId == labId && g.GradeStatus == "Graded")
-                    .ToListAsync();
+        //public async Task<decimal> GetAverageScoreByLabAsync(int labId)
+        //{
+        //    try
+        //    {
+        //        var grades = await _DBContext.Grades
+        //            .Where(g => g.LabId == labId && g.GradeStatus == "Graded")
+        //            .ToListAsync();
                 
-                // Vì entity Grade không có trường Score, trả về số lượng grade đã chấm
-                return grades.Count;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        // Vì entity Grade không có trường Score, trả về số lượng grade đã chấm
+        //        return grades.Count;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        public async Task<decimal> GetAverageScoreByUserAsync(Guid userId)
-        {
-            try
-            {
-                var grades = await _DBContext.Grades
-                    .Where(g => g.UserId == userId && g.GradeStatus == "Graded")
-                    .ToListAsync();
+        //public async Task<decimal> GetAverageScoreByUserAsync(Guid userId)
+        //{
+        //    try
+        //    {
+        //        var grades = await _DBContext.Grades
+        //            .Where(g => g.UserId == userId && g.GradeStatus == "Graded")
+        //            .ToListAsync();
                 
-                // Vì entity Grade không có trường Score, trả về số lượng grade đã chấm
-                return grades.Count;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        // Vì entity Grade không có trường Score, trả về số lượng grade đã chấm
+        //        return grades.Count;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        public async Task<List<Grade>> GetGradesByStudentId(Guid studentId)
-        {
-            try
-            {
-                return await _DBContext.Grades
-                    .Include(g => g.Lab)
-                    .Include(g => g.Team)
-                    .Include(g => g.User)
-                    .Where(g => g.UserId == studentId)
+        //public async Task<List<Grade>> GetGradesByStudentId(Guid studentId)
+        //{
+        //    try
+        //    {
+        //        return await _DBContext.Grades
+        //            .Include(g => g.Lab)
+        //            .Include(g => g.Team)
+        //            .Include(g => g.User)
+        //            .Where(g => g.UserId == studentId)
                     
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        public async Task<List<Grade>> GetGradesByLabAndTeam(int labId, int teamId)
-        {
-            try
-            {
-                return await _DBContext.Grades
-                    .Include(g => g.User)
-                    .Where(g => g.LabId == labId && g.TeamId == teamId)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //public async Task<List<Grade>> GetGradesByLabAndTeam(int labId, int teamId)
+        //{
+        //    try
+        //    {
+        //        return await _DBContext.Grades
+        //            .Include(g => g.User)
+        //            .Where(g => g.LabId == labId && g.TeamId == teamId)
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
     }
 }

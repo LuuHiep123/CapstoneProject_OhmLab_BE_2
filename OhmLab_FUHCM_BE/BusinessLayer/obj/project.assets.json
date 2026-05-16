@@ -10113,11 +10113,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
+      "projectUniqueName": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
       "projectName": "BusinessLayer",
-      "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
+      "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
       "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-      "outputPath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\BusinessLayer\\obj\\",
+      "outputPath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\BusinessLayer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -10138,8 +10138,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj": {
-              "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj"
+            "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj": {
+              "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj"
             }
           }
         }

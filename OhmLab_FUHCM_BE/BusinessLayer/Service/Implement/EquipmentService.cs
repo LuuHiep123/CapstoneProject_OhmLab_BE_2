@@ -123,7 +123,7 @@ namespace BusinessLayer.Service.Implement
                 equipment.EquipmentCode = equipmentType.EquipmentTypeCode;
                 equipment.EquipmentStatus = "Available";
                 equipment.EquipmentTypeUrlImg = equipmentType.EquipmentTypeUrlImg;
-                equipment.EquipmentQr = GenerateQRCodeBase64(equipmentId);
+                equipment.EquipmentQr = GenerateQRCodeBase64("https://swd392be.io.vn/api/equipment/" + equipmentId);
                 await _equipmentRepository.CreateEquipment(equipment);
 
                 equipmentType.EquipmentTypeQuantity += 1;
@@ -325,7 +325,7 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var equipment = await _equipmentRepository.GetEquipmentById(id);
-                if (equipment != null || !equipment.EquipmentStatus.Equals("Delete"))
+                if (equipment != null && !equipment.EquipmentStatus.Equals("Delete"))
                 {
                     var result = _mapper.Map(model, equipment);
                     await _equipmentRepository.UpdateEquipment(result);

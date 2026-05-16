@@ -7,11 +7,13 @@ namespace DataLayer.Entities
     {
         public Equipment()
         {
+            Reports = new HashSet<Report>();
             TeamEquipments = new HashSet<TeamEquipment>();
         }
 
         public string EquipmentId { get; set; } = null!;
         public string EquipmentTypeId { get; set; } = null!;
+        public int? RoomId { get; set; }
         public string EquipmentName { get; set; } = null!;
         public string EquipmentCode { get; set; } = null!;
         public string EquipmentNumberSerial { get; set; } = null!;
@@ -21,6 +23,8 @@ namespace DataLayer.Entities
         public string EquipmentStatus { get; set; } = null!;
 
         public virtual EquipmentType EquipmentType { get; set; } = null!;
+        public virtual Room? Room { get; set; }
+        public virtual ICollection<Report> Reports { get; set; }
         public virtual ICollection<TeamEquipment> TeamEquipments { get; set; }
     }
 }

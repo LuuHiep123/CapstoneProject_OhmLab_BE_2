@@ -12,8 +12,8 @@ namespace DataLayer.Repository.Implement
     public class AccessoryKittemplateRepository : IAccessoryKitTemplateRepository
     {
 
-        private readonly db_abadcb_ohmlabContext _context;
-        public AccessoryKittemplateRepository(db_abadcb_ohmlabContext context)
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
+        public AccessoryKittemplateRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

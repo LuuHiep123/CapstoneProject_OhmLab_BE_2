@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qhha2zpeLdQ=",
+  "dgSpecHash": "gYdzEwCdv78=",
   "success": true,
-  "projectFilePath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
+  "projectFilePath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
@@ -215,9 +215,9 @@
       "code": "NU1603",
       "level": "Warning",
       "message": "BusinessLayer depends on EPPlus (>= 8.0.10) but EPPlus 8.0.10 was not found. EPPlus 8.1.0 was resolved instead.",
-      "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
+      "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
+      "filePath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\BusinessLayer\\BusinessLayer.csproj",
       "libraryId": "EPPlus",
       "targetGraphs": [
         "net6.0"

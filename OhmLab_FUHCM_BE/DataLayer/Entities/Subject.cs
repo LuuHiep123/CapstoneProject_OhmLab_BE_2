@@ -7,7 +7,6 @@ namespace DataLayer.Entities
     {
         public Subject()
         {
-            Classes = new HashSet<Class>();
             Labs = new HashSet<Lab>();
             SemesterSubjects = new HashSet<SemesterSubject>();
         }
@@ -18,7 +17,6 @@ namespace DataLayer.Entities
         public string? SubjectDescription { get; set; }
         public string SubjectStatus { get; set; } = null!;
 
-        public virtual ICollection<Class> Classes { get; set; }
         public virtual ICollection<Lab> Labs { get; set; }
         public virtual ICollection<SemesterSubject> SemesterSubjects { get; set; }
     }

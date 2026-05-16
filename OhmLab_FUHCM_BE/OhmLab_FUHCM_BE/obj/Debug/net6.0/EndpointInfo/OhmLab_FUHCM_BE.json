@@ -498,431 +498,6 @@
         }
       }
     },
-    "/api/assignment/schedules/{id}": {
-      "put": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateScheduleRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateScheduleRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateScheduleRequestModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/classes/{classId}/schedules": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "classId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/lecturers/{lecturerId}/schedules": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "lecturerId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/schedules/date/{date}": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "date",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/schedules/daterange": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "startDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/grades": {
-      "post": {
-        "tags": [
-          "Assignment"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeReportRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeReportRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeReportRequestModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/grades/{id}": {
-      "put": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateGradeRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateGradeRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateGradeRequestModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/labs/{labId}/grades": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/students/{studentId}/grades": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/labs/{labId}/statistics": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/students/{studentId}/grade-summary": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/classes/{classId}/practice-summary": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "classId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/grades/submit": {
-      "post": {
-        "tags": [
-          "Assignment"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeReportRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeReportRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeReportRequestModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/assignment/lecturer/{lecturerId}/classes": {
-      "get": {
-        "tags": [
-          "Assignment"
-        ],
-        "parameters": [
-          {
-            "name": "lecturerId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/api/class": {
       "post": {
         "tags": [
@@ -1108,60 +683,6 @@
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/class/addscheduleforclass": {
-      "post": {
-        "tags": [
-          "Class"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddScheduleForClassRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddScheduleForClassRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddScheduleForClassRequestModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/class/{classId}/labs": {
-      "get": {
-        "tags": [
-          "Class"
-        ],
-        "parameters": [
-          {
-            "name": "classId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -1985,127 +1506,26 @@
         }
       }
     },
-    "/api/grade/labs/{labId}/teams/{teamId}/grade": {
+    "/api/grade/gradeforteam": {
       "post": {
         "tags": [
           "Grade"
         ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "teamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GradeTeamLabRequestModel"
+                "$ref": "#/components/schemas/CreateGradeRequestModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GradeTeamLabRequestModel"
+                "$ref": "#/components/schemas/CreateGradeRequestModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GradeTeamLabRequestModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "teamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/grade/labs/{labId}/teams/{teamId}/grades": {
-      "put": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "teamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTeamGradesRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTeamGradesRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateTeamGradesRequestModel"
+                "$ref": "#/components/schemas/CreateGradeRequestModel"
               }
             }
           }
@@ -2117,21 +1537,97 @@
         }
       }
     },
-    "/api/grade/labs/{labId}/teams/{teamId}/members/{studentId}/grade": {
+    "/api/grade/searchgrade": {
       "post": {
         "tags": [
           "Grade"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllGradeRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllGradeRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllGradeRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/grade/searchgradebyregisterscheduleidandteamid": {
+      "post": {
+        "tags": [
+          "Grade"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetGradeOfTeamByRegistrationScheduleIdAndTeamId"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetGradeOfTeamByRegistrationScheduleIdAndTeamId"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetGradeOfTeamByRegistrationScheduleIdAndTeamId"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/grade/registration/{registrationScheduleId}": {
+      "get": {
+        "tags": [
+          "Grade"
+        ],
         "parameters": [
           {
-            "name": "labId",
+            "name": "registrationScheduleId",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
             }
-          },
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/grade/team/{teamId}": {
+      "get": {
+        "tags": [
+          "Grade"
+        ],
+        "parameters": [
           {
             "name": "teamId",
             "in": "path",
@@ -2140,36 +1636,8 @@
               "type": "integer",
               "format": "int32"
             }
-          },
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeTeamMemberRequestModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeTeamMemberRequestModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GradeTeamMemberRequestModel"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Success"
@@ -2177,14 +1645,14 @@
         }
       }
     },
-    "/api/grade/labs/{labId}/pending-teams": {
+    "/api/grade/{gradeId}": {
       "get": {
         "tags": [
           "Grade"
         ],
         "parameters": [
           {
-            "name": "labId",
+            "name": "gradeId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2200,139 +1668,76 @@
         }
       }
     },
-    "/api/grade/labs/{labId}/my-individual-grade": {
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/grade/labs/{labId}/team-grade-statistics": {
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/grade/labs/{labId}/grade-for-id": {
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "labId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/grade/labs/all-grades": {
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/grade/students/{studentId}/labs": {
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/grade/classes/{classId}/grades": {
-      "get": {
-        "tags": [
-          "Grade"
-        ],
-        "parameters": [
-          {
-            "name": "classId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
+    "/api/grade/update": {
       "put": {
         "tags": [
           "Grade"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGradeRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGradeRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGradeRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/gradedescription/searchgradedescription": {
+      "post": {
+        "tags": [
+          "GradeDescription"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllGradeDescriptionRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllGradeDescriptionRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllGradeDescriptionRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/gradedescription/grade/{gradeId}": {
+      "get": {
+        "tags": [
+          "GradeDescription"
+        ],
         "parameters": [
           {
-            "name": "classId",
+            "name": "gradeId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2341,25 +1746,151 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/gradedescription/mygrade": {
+      "get": {
+        "tags": [
+          "GradeDescription"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/gradedescription/{gradeDescriptionId}": {
+      "get": {
+        "tags": [
+          "GradeDescription"
+        ],
+        "parameters": [
+          {
+            "name": "gradeDescriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/gradedescription/update": {
+      "put": {
+        "tags": [
+          "GradeDescription"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateClassGradesRequestModel"
+                "$ref": "#/components/schemas/UpdateGradeDescriptionRequestModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateClassGradesRequestModel"
+                "$ref": "#/components/schemas/UpdateGradeDescriptionRequestModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateClassGradesRequestModel"
+                "$ref": "#/components/schemas/UpdateGradeDescriptionRequestModel"
               }
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/head-of-department/dashboard": {
+      "get": {
+        "tags": [
+          "HeadOfDepartment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/head-of-department/monitoring/overview": {
+      "post": {
+        "tags": [
+          "HeadOfDepartment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitorLabRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitorLabRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonitorLabRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/head-of-department/monitoring/subject-statistics": {
+      "get": {
+        "tags": [
+          "HeadOfDepartment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/head-of-department/monitoring/lecturer-performance": {
+      "get": {
+        "tags": [
+          "HeadOfDepartment"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/head-of-department/monitoring/equipment-usage": {
+      "get": {
+        "tags": [
+          "HeadOfDepartment"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -3310,17 +2841,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AcceptRejectRegistrationScheduleRequestModel"
+                "$ref": "#/components/schemas/RejectRegistrationScheduleModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/AcceptRejectRegistrationScheduleRequestModel"
+                "$ref": "#/components/schemas/RejectRegistrationScheduleModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/AcceptRejectRegistrationScheduleRequestModel"
+                "$ref": "#/components/schemas/RejectRegistrationScheduleModel"
               }
             }
           }
@@ -3332,7 +2863,7 @@
         }
       }
     },
-    "/api/registrationschedule/checkdupplicate": {
+    "/api/registrationschedule/cancel": {
       "post": {
         "tags": [
           "RegistrationSchedule"
@@ -3341,17 +2872,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CheckDupplicateRegitrationScheduleRequestModel"
+                "$ref": "#/components/schemas/CancelRegistrationScheduleModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CheckDupplicateRegitrationScheduleRequestModel"
+                "$ref": "#/components/schemas/CancelRegistrationScheduleModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CheckDupplicateRegitrationScheduleRequestModel"
+                "$ref": "#/components/schemas/CancelRegistrationScheduleModel"
               }
             }
           }
@@ -3363,22 +2894,30 @@
         }
       }
     },
-    "/api/registrationschedule/listslotemptybydate/{date}": {
+    "/api/registrationschedule/lecturercheckout": {
       "post": {
         "tags": [
           "RegistrationSchedule"
         ],
-        "parameters": [
-          {
-            "name": "date",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckOutRegistrationScheduleModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckOutRegistrationScheduleModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckOutRegistrationScheduleModel"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -3415,49 +2954,6 @@
             "description": "Success"
           }
         }
-      },
-      "get": {
-        "tags": [
-          "Report"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/report/today-slots": {
-      "get": {
-        "tags": [
-          "Report"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/report/today-classes": {
-      "get": {
-        "tags": [
-          "Report"
-        ],
-        "parameters": [
-          {
-            "name": "slotName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
       }
     },
     "/api/report/{id}": {
@@ -3483,60 +2979,26 @@
         }
       }
     },
-    "/api/report/{id}/detail": {
-      "get": {
+    "/api/report/search": {
+      "post": {
         "tags": [
           "Report"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/report/{id}/status": {
-      "put": {
-        "tags": [
-          "Report"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateReportStatusRequestModel"
+                "$ref": "#/components/schemas/GetAllReportRequestModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateReportStatusRequestModel"
+                "$ref": "#/components/schemas/GetAllReportRequestModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateReportStatusRequestModel"
+                "$ref": "#/components/schemas/GetAllReportRequestModel"
               }
             }
           }
@@ -3548,11 +3010,30 @@
         }
       }
     },
-    "/api/report/statistics": {
-      "get": {
+    "/api/report/resolvereport": {
+      "put": {
         "tags": [
           "Report"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptReportRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptReportRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptReportRequestModel"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -3583,14 +3064,88 @@
         }
       }
     },
-    "/api/report/schedule/{registrationScheduleId}": {
+    "/api/report/my-reports": {
       "get": {
         "tags": [
           "Report"
         ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/room/room": {
+      "post": {
+        "tags": [
+          "Room"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/room/search": {
+      "post": {
+        "tags": [
+          "Room"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllRoomRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllRoomRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllRoomRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/room/{id}": {
+      "get": {
+        "tags": [
+          "Room"
+        ],
         "parameters": [
           {
-            "name": "registrationScheduleId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -3604,13 +3159,41 @@
             "description": "Success"
           }
         }
-      }
-    },
-    "/api/report/my-reports": {
-      "get": {
+      },
+      "put": {
         "tags": [
-          "Report"
+          "Room"
         ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoomRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoomRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoomRequestModel"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -3618,22 +3201,21 @@
         }
       }
     },
-    "/api/report/pending": {
-      "get": {
+    "/api/room/delete/{id}": {
+      "post": {
         "tags": [
-          "Report"
+          "Room"
         ],
-        "responses": {
-          "200": {
-            "description": "Success"
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
-        }
-      }
-    },
-    "/api/report/resolved": {
-      "get": {
-        "tags": [
-          "Report"
         ],
         "responses": {
           "200": {
@@ -3868,6 +3450,37 @@
         }
       }
     },
+    "/api/security/checkin": {
+      "post": {
+        "tags": [
+          "Security"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInSecurityRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInSecurityRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckInSecurityRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/semester": {
       "post": {
         "tags": [
@@ -3982,6 +3595,209 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/semestersubject": {
+      "post": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSemesterSubjectRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSemesterSubjectRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSemesterSubjectRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/search": {
+      "post": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllSemesterSubjectRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllSemesterSubjectRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllSemesterSubjectRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/getbyid/{id}": {
+      "get": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/update/{id}": {
+      "put": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSemesterSubjectRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSemesterSubjectRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSemesterSubjectRequestModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/semester/{SemesterId}": {
+      "get": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "parameters": [
+          {
+            "name": "SemesterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/subject/{SubjectId}": {
+      "get": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "parameters": [
+          {
+            "name": "SubjectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/semestersubject/subjectidandsemesterid": {
+      "get": {
+        "tags": [
+          "SemesterSubject"
+        ],
+        "parameters": [
+          {
+            "name": "SubjectId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "SemesterId",
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -4857,31 +4673,30 @@
         }
       }
     },
-    "/api/teamuser/team/{teamId}/user/{userId}": {
+    "/api/teamuser/teamuser": {
       "post": {
         "tags": [
           "TeamUser"
         ],
-        "parameters": [
-          {
-            "name": "teamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListTeamUserRequestModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListTeamUserRequestModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListTeamUserRequestModel"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -5035,6 +4850,34 @@
       }
     },
     "/api/user/admin": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/user/headofdepartment,admin ": {
       "post": {
         "tags": [
           "User"
@@ -5285,8 +5128,18 @@
           "registrationScheduleId": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AcceptReportRequestModel": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "integer",
+            "format": "int32"
           },
-          "registrationScheduleNote": {
+          "reportNote": {
             "type": "string",
             "nullable": true
           }
@@ -5329,16 +5182,40 @@
         },
         "additionalProperties": false
       },
-      "CheckDupplicateRegitrationScheduleRequestModel": {
+      "CancelRegistrationScheduleModel": {
         "type": "object",
         "properties": {
-          "registrationScheduleDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "slotId": {
+          "registrationScheduleId": {
             "type": "integer",
             "format": "int32"
+          },
+          "registrationScheduleNote": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckInSecurityRequestModel": {
+        "type": "object",
+        "properties": {
+          "registrationScheduleId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CheckOutRegistrationScheduleModel": {
+        "type": "object",
+        "properties": {
+          "registrationScheduleId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "registraionSchedule_Url_Img_Checkout": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5393,7 +5270,7 @@
         ],
         "type": "object",
         "properties": {
-          "subjectId": {
+          "semesterSubjectId": {
             "type": "integer",
             "format": "int32"
           },
@@ -5426,6 +5303,11 @@
         "properties": {
           "equipmentTypeId": {
             "type": "string",
+            "nullable": true
+          },
+          "roomId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "equipmentName": {
@@ -5465,6 +5347,28 @@
         },
         "additionalProperties": false
       },
+      "CreateGradeRequestModel": {
+        "type": "object",
+        "properties": {
+          "registraionScheduleId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gradeScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "gradeDescription": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateKitAccessoryRequestModel": {
         "type": "object",
         "properties": {
@@ -5492,6 +5396,11 @@
           },
           "kitName": {
             "type": "string",
+            "nullable": true
+          },
+          "roomId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "kitDescription": {
@@ -5546,6 +5455,10 @@
           "labRequest": {
             "minLength": 1,
             "type": "string"
+          },
+          "labNumberOfPractice": {
+            "type": "integer",
+            "format": "int32"
           },
           "labTarget": {
             "minLength": 1,
@@ -5610,15 +5523,19 @@
       "CreateRegistrationScheduleRequestModel": {
         "type": "object",
         "properties": {
-          "registrationScheduleName": {
+          "registraionScheduleName": {
             "type": "string",
             "nullable": true
           },
-          "teacherId": {
+          "teaacherId": {
             "type": "string",
             "format": "uuid"
           },
           "classId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roomId": {
             "type": "integer",
             "format": "int32"
           },
@@ -5630,11 +5547,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "registrationScheduleDate": {
+          "registraionScheduleDate": {
             "type": "string",
             "format": "date-time"
           },
-          "registrationScheduleDescription": {
+          "registraionScheduleDescription": {
             "type": "string",
             "nullable": true
           }
@@ -5644,6 +5561,18 @@
       "CreateReportRequestModel": {
         "type": "object",
         "properties": {
+          "registraionScheduleId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "equipmentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "url_Img": {
+            "type": "string",
+            "nullable": true
+          },
           "reportTitle": {
             "type": "string",
             "nullable": true
@@ -5651,12 +5580,14 @@
           "reportDescription": {
             "type": "string",
             "nullable": true
-          },
-          "selectedSlot": {
-            "type": "string",
-            "nullable": true
-          },
-          "selectedClass": {
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateRoomRequestModel": {
+        "type": "object",
+        "properties": {
+          "roomName": {
             "type": "string",
             "nullable": true
           }
@@ -5726,6 +5657,20 @@
         },
         "additionalProperties": false
       },
+      "CreateSemesterSubjectRequestModel": {
+        "type": "object",
+        "properties": {
+          "subjectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "semesterId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateSlotRequestModel": {
         "required": [
           "slotEndTime",
@@ -5766,7 +5711,6 @@
       },
       "CreateSubjectRequestModel": {
         "required": [
-          "semesterId",
           "subjectCode",
           "subjectName"
         ],
@@ -5783,10 +5727,6 @@
           "subjectDescription": {
             "type": "string",
             "nullable": true
-          },
-          "semesterId": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -5862,6 +5802,20 @@
             "maxLength": 50,
             "minLength": 0,
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateTeamUserRequestModel": {
+        "type": "object",
+        "properties": {
+          "teamId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -5976,6 +5930,46 @@
         },
         "additionalProperties": false
       },
+      "GetAllGradeDescriptionRequestModel": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllGradeRequestModel": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyWord": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GetAllKitRequestModel": {
         "type": "object",
         "properties": {
@@ -6034,6 +6028,74 @@
           "keyWord": {
             "type": "string",
             "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "slotId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllReportRequestModel": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllRoomRequestModel": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyWord": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllSemesterSubjectRequestModel": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
           },
           "status": {
             "type": "string",
@@ -6178,64 +6240,16 @@
         },
         "additionalProperties": false
       },
-      "GradeReportRequestModel": {
+      "GetGradeOfTeamByRegistrationScheduleIdAndTeamId": {
         "type": "object",
         "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid"
+          "registrationScheduleId": {
+            "type": "integer",
+            "format": "int32"
           },
           "teamId": {
             "type": "integer",
             "format": "int32"
-          },
-          "labId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "gradeDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "grade": {
-            "type": "number",
-            "format": "float"
-          }
-        },
-        "additionalProperties": false
-      },
-      "GradeTeamLabRequestModel": {
-        "type": "object",
-        "properties": {
-          "classId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "grade": {
-            "type": "number",
-            "format": "float"
-          },
-          "gradeDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "gradeStatus": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GradeTeamMemberRequestModel": {
-        "type": "object",
-        "properties": {
-          "individualGrade": {
-            "type": "number",
-            "format": "float"
-          },
-          "individualComment": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6274,11 +6288,55 @@
         },
         "additionalProperties": false
       },
+      "ListTeamUserRequestModel": {
+        "type": "object",
+        "properties": {
+          "listTeamUser": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateTeamUserRequestModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "LoginMailModel": {
         "type": "object",
         "properties": {
           "googleId": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonitorLabRequestModel": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "subjectId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "classId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lecturerId": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           }
         },
@@ -6304,6 +6362,20 @@
             "nullable": true
           },
           "userRoleName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RejectRegistrationScheduleModel": {
+        "type": "object",
+        "properties": {
+          "registrationScheduleId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "registrationScheduleNote": {
             "type": "string",
             "nullable": true
           }
@@ -6362,28 +6434,15 @@
         },
         "additionalProperties": false
       },
-      "UpdateClassGradesRequestModel": {
-        "type": "object",
-        "properties": {
-          "grades": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UpdateGradeItemModel"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "UpdateClassRequestModel": {
         "required": [
           "className",
           "classStatus",
-          "subjectId"
+          "semesterSubjectId"
         ],
         "type": "object",
         "properties": {
-          "subjectId": {
+          "semesterSubjectId": {
             "type": "integer",
             "format": "int32"
           },
@@ -6437,6 +6496,11 @@
             "type": "string",
             "nullable": true
           },
+          "roomId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "equipmentNumberSerial": {
             "type": "string",
             "nullable": true
@@ -6486,26 +6550,38 @@
         },
         "additionalProperties": false
       },
-      "UpdateGradeItemModel": {
+      "UpdateGradeDescriptionRequestModel": {
         "type": "object",
         "properties": {
+          "gradeDescriptionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gradeId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "studentId": {
             "type": "string",
-            "nullable": true
+            "format": "uuid"
+          },
+          "classId": {
+            "type": "integer",
+            "format": "int32"
           },
           "labId": {
-            "type": "string",
-            "nullable": true
+            "type": "integer",
+            "format": "int32"
           },
-          "grade": {
+          "gradeDescriptionScore": {
             "type": "number",
             "format": "double"
           },
-          "gradeDescription": {
+          "gradeDescriptionDescription": {
             "type": "string",
             "nullable": true
           },
-          "gradeStatus": {
+          "gradeDescriptionStatus": {
             "type": "string",
             "nullable": true
           }
@@ -6515,20 +6591,37 @@
       "UpdateGradeRequestModel": {
         "type": "object",
         "properties": {
-          "userId": {
+          "gradeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "teacherId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
+          },
+          "registraionScheduleId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "teamId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
-          "labId": {
-            "type": "integer",
-            "format": "int32"
+          "gradeScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
           "gradeDescription": {
             "type": "string",
+            "nullable": true
+          },
+          "gradeDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "gradeStatus": {
@@ -6569,6 +6662,11 @@
           },
           "kitName": {
             "type": "string",
+            "nullable": true
+          },
+          "roomId": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "kitDescription": {
@@ -6642,6 +6740,10 @@
             "minLength": 1,
             "type": "string"
           },
+          "labNumberOfPractice": {
+            "type": "integer",
+            "format": "int32"
+          },
           "labTarget": {
             "minLength": 1,
             "type": "string"
@@ -6670,7 +6772,7 @@
       "UpdateRegistrationScheduleRequestModel": {
         "type": "object",
         "properties": {
-          "registrationScheduleName": {
+          "registraionScheduleName": {
             "type": "string",
             "nullable": true
           },
@@ -6686,33 +6788,23 @@
             "type": "integer",
             "format": "int32"
           },
+          "roomId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "slotId": {
             "type": "integer",
             "format": "int32"
           },
-          "registrationScheduleDate": {
+          "registraionScheduleDate": {
             "type": "string",
             "format": "date-time"
           },
-          "registrationScheduleDescription": {
+          "registraionScheduleDescription": {
             "type": "string",
             "nullable": true
           },
-          "registrationScheduleStatus": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateReportStatusRequestModel": {
-        "type": "object",
-        "properties": {
-          "reportStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "resolutionNotes": {
+          "registraionScheduleStatus": {
             "type": "string",
             "nullable": true
           }
@@ -6745,22 +6837,14 @@
         },
         "additionalProperties": false
       },
-      "UpdateScheduleRequestModel": {
+      "UpdateRoomRequestModel": {
         "type": "object",
         "properties": {
-          "classId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "scheduleName": {
+          "roomName": {
             "type": "string",
             "nullable": true
           },
-          "scheduleDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "scheduleDescription": {
+          "roomStatus": {
             "type": "string",
             "nullable": true
           }
@@ -6830,6 +6914,20 @@
         },
         "additionalProperties": false
       },
+      "UpdateSemesterSubjectRequestModel": {
+        "type": "object",
+        "properties": {
+          "subjectId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "semesterId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateSubjectRequestModel": {
         "required": [
           "subjectName",
@@ -6881,24 +6979,6 @@
             "nullable": true
           },
           "teamEquipmentStatus": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateTeamGradesRequestModel": {
-        "type": "object",
-        "properties": {
-          "grade": {
-            "maximum": 10,
-            "minimum": 0,
-            "type": "number",
-            "format": "double"
-          },
-          "description": {
-            "maxLength": 500,
-            "minLength": 0,
             "type": "string",
             "nullable": true
           }

@@ -7,9 +7,8 @@ namespace DataLayer.Entities
     {
         public Slot()
         {
+            RegistraionSchedules = new HashSet<RegistraionSchedule>();
             ScheduleTypes = new HashSet<ScheduleType>();
-            RegistrationSchedules = new HashSet<RegistrationSchedule>();
-
         }
 
         public int SlotId { get; set; }
@@ -19,8 +18,7 @@ namespace DataLayer.Entities
         public string? SlotDescription { get; set; }
         public string SlotStatus { get; set; } = null!;
 
+        public virtual ICollection<RegistraionSchedule> RegistraionSchedules { get; set; }
         public virtual ICollection<ScheduleType> ScheduleTypes { get; set; }
-        public virtual ICollection<RegistrationSchedule> RegistrationSchedules { get; set; }
-
     }
 }

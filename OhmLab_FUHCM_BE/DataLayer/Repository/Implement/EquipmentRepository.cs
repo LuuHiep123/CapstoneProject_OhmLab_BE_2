@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class EquipmentRepository : IEquipmentRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public EquipmentRepository(db_abadcb_ohmlabContext OhmLab_DBContext)
+        public EquipmentRepository(DBContext.db_abadcb_ohmlabContext OhmLab_DBContext)
         {
             _DBContext = OhmLab_DBContext;
         }
@@ -52,6 +52,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.Equipment
                     .Include(e => e.EquipmentType)
+                    .Include(e => e.Room)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -66,6 +67,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.Equipment
                     .Include(e => e.EquipmentType)
+                    .Include(e => e.Room)
                     .Where(e => e.EquipmentTypeId.Equals(equipmentId))
                     .ToListAsync();
             }
@@ -81,6 +83,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.Equipment
                     .Include(e => e.EquipmentType)
+                    .Include(e => e.Room)
                     .FirstOrDefaultAsync(e => e.EquipmentId == id);
             }
             catch (Exception ex)
@@ -93,7 +96,9 @@ namespace DataLayer.Repository.Implement
         {
             try
             {
-                return await _DBContext.Equipment.FirstOrDefaultAsync(e => e.EquipmentName == name);
+                return await _DBContext.Equipment
+                    .Include(e => e.Room)
+                    .FirstOrDefaultAsync(e => e.EquipmentName == name);
             }
             catch (Exception ex)
             {

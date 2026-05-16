@@ -11,18 +11,18 @@ namespace DataLayer.Repository.Implement
 {
     public class RegistrationScheduleRepository : IRegistrationScheduleRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public RegistrationScheduleRepository(db_abadcb_ohmlabContext context)
+        public RegistrationScheduleRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }
 
-        public async Task<bool> CreateRegistrationSchedule(RegistrationSchedule registrationSchedule)
+        public async Task<bool> CreateRegistrationSchedule(RegistraionSchedule registrationSchedule)
         {
             try
             {
-                await _context.RegistrationSchedules.AddAsync(registrationSchedule);
+                await _context.RegistraionSchedules.AddAsync(registrationSchedule);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -32,11 +32,11 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<bool> DeleteRegistrationSchedule(RegistrationSchedule registrationSchedule)
+        public async Task<bool> DeleteRegistrationSchedule(RegistraionSchedule registrationSchedule)
         {
             try
             {
-                _context.RegistrationSchedules.Remove(registrationSchedule);
+                _context.RegistraionSchedules.Remove(registrationSchedule);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -46,14 +46,17 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<List<RegistrationSchedule>> GetAllRegistrationSchedule()
+        public async Task<List<RegistraionSchedule>> GetAllRegistrationSchedule()
         {
             try
             {
-                var listRegistrationSchedule = await _context.RegistrationSchedules
+                var listRegistrationSchedule = await _context.RegistraionSchedules
                     .Include(rs => rs.Class)
+                    .Include(rs => rs.Teaacher)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Lab)
-                    .Include(rs => rs.User)
+                        .ThenInclude(l => l.Subject)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Slot)
                     .ToListAsync();
                 return listRegistrationSchedule;
@@ -64,16 +67,19 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<List<RegistrationSchedule>> GetAllRegistrationScheduleByTeacherId(Guid teacherId)
+        public async Task<List<RegistraionSchedule>> GetAllRegistrationScheduleByTeacherId(Guid teacherId)
         {
             try
             {
-                var listRegistrationSchedule = await _context.RegistrationSchedules
+                var listRegistrationSchedule = await _context.RegistraionSchedules
                     .Include(rs => rs.Class)
+                   .Include(rs => rs.Room)
+                    .Include(rs => rs.Teaacher)
                     .Include(rs => rs.Lab)
-                    .Include(rs => rs.User)
+                       .ThenInclude(l => l.Subject)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Slot)
-                    .Where(rs => rs.TeacherId.Equals(teacherId))
+                    .Where(rs => rs.TeaacherId.Equals(teacherId))
                     .ToListAsync();
                 return listRegistrationSchedule;
             }
@@ -83,16 +89,19 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<RegistrationSchedule> GetRegistrationScheduleById(int id)
+        public async Task<RegistraionSchedule> GetRegistrationScheduleById(int id)
         {
             try
             {
-                var listRegistrationSchedule = await _context.RegistrationSchedules
+                var listRegistrationSchedule = await _context.RegistraionSchedules
                     .Include(rs => rs.Class)
+                   .Include(rs => rs.Room)
+                    .Include(rs => rs.Teaacher)
                     .Include(rs => rs.Lab)
-                    .Include(rs => rs.User)
+                       .ThenInclude(l => l.Subject)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Slot)
-                    .FirstOrDefaultAsync(rs => rs.RegistrationScheduleId == id);
+                    .FirstOrDefaultAsync(rs => rs.RegistraionScheduleId == id);
                 return listRegistrationSchedule;
             }
             catch (Exception ex)
@@ -101,16 +110,19 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<List<RegistrationSchedule>> GetByDateWithIncludesAsync(DateTime date)
+        public async Task<List<RegistraionSchedule>> GetByDateWithIncludesAsync(DateTime date)
         {
             try
             {
-                var registrationSchedules = await _context.RegistrationSchedules
+                var registrationSchedules = await _context.RegistraionSchedules
                     .Include(rs => rs.Class)
+                   .Include(rs => rs.Room)
+                    .Include(rs => rs.Teaacher)
                     .Include(rs => rs.Lab)
-                    .Include(rs => rs.User)
+                       .ThenInclude(l => l.Subject)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Slot)
-                    .Where(rs => rs.RegistrationScheduleDate.Date == date.Date)
+                    .Where(rs => rs.RegistraionScheduleCreateDate.Date == date.Date)
                     .ToListAsync();
                 return registrationSchedules;
             }
@@ -120,16 +132,19 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<List<RegistrationSchedule>> GetByTeacherIdAndDateWithIncludesAsync(Guid teacherId, DateTime date)
+        public async Task<List<RegistraionSchedule>> GetByTeacherIdAndDateWithIncludesAsync(Guid teacherId, DateTime date)
         {
             try
             {
-                var registrationSchedules = await _context.RegistrationSchedules
+                var registrationSchedules = await _context.RegistraionSchedules
                     .Include(rs => rs.Class)
+                   .Include(rs => rs.Room)
+                    .Include(rs => rs.Teaacher)
                     .Include(rs => rs.Lab)
-                    .Include(rs => rs.User)
+                       .ThenInclude(l => l.Subject)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Slot)
-                    .Where(rs => rs.TeacherId == teacherId && rs.RegistrationScheduleDate.Date == date.Date)
+                    .Where(rs => rs.TeaacherId == teacherId && rs.RegistraionScheduleCreateDate.Date == date.Date)
                     .ToListAsync();
                 return registrationSchedules;
             }
@@ -139,16 +154,19 @@ namespace DataLayer.Repository.Implement
             }
         }
 
-        public async Task<List<RegistrationSchedule>> GetByClassIdAndDateWithIncludesAsync(int classId, DateTime date)
+        public async Task<List<RegistraionSchedule>> GetByClassIdAndDateWithIncludesAsync(int classId, DateTime date)
         {
             try
             {
-                var registrationSchedules = await _context.RegistrationSchedules
+                var registrationSchedules = await _context.RegistraionSchedules
                     .Include(rs => rs.Class)
+                   .Include(rs => rs.Room)
+                    .Include(rs => rs.Teaacher)
                     .Include(rs => rs.Lab)
-                    .Include(rs => rs.User)
+                       .ThenInclude(l => l.Subject)
+                    .Include(rs => rs.Room)
                     .Include(rs => rs.Slot)
-                    .Where(rs => rs.ClassId == classId && rs.RegistrationScheduleDate.Date == date.Date)
+                    .Where(rs => rs.ClassId == classId /*&& rs.RegistraionScheduleDate.date == date.Date*/)
                     .ToListAsync();
                 return registrationSchedules;
             }
@@ -159,11 +177,11 @@ namespace DataLayer.Repository.Implement
         }
 
 
-        public async Task<bool> UpdateRegistrationSchedule(RegistrationSchedule registrationSchedule)
+        public async Task<bool> UpdateRegistrationSchedule(RegistraionSchedule registrationSchedule)
         {
             try
             {
-                _context.RegistrationSchedules.Update(registrationSchedule);
+                _context.RegistraionSchedules.Update(registrationSchedule);
                 await _context.SaveChangesAsync();
                 return true;
             }

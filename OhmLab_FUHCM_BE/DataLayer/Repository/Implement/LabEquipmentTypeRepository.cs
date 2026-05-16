@@ -7,9 +7,9 @@ namespace DataLayer.Repository.Implement
 {
     public class LabEquipmentTypeRepository : ILabEquipmentTypeRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public LabEquipmentTypeRepository(db_abadcb_ohmlabContext context)
+        public LabEquipmentTypeRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

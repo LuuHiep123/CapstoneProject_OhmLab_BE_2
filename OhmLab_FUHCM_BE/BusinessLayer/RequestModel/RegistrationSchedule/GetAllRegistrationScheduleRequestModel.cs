@@ -12,5 +12,7 @@ namespace BusinessLayer.RequestModel.RegistrationSchedule
         public int pageSize { get; set; } = 1;
         public string? keyWord { get; set; }
         public string? status { get; set; }
+        public DateTime? Date { get; set; }
+        public int? SlotId { get; set; }
     }
 }

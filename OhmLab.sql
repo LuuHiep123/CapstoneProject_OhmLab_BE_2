@@ -8,8 +8,10 @@ GO
 IF DB_ID('OhmLab_DB') IS NOT NULL
 BEGIN
     --DROP DATABASE [OhmLab_DB]
-	ALTER DATABASE [OhmLab_DB] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-	DROP DATABASE [OhmLab_DB];
+		ALTER DATABASE OhmLab_DB
+		SET SINGLE_USER
+		WITH ROLLBACK IMMEDIATE;
+		DROP DATABASE [OhmLab_DB];
 END
 GO
 CREATE DATABASE [OhmLab_DB]
@@ -17,6 +19,19 @@ GO
 
 USE [OhmLab_DB]
 GO
+-- ========================
+-- 1. Bảng Room
+-- ========================
+	CREATE TABLE Room (
+		Room_id INT NOT NULL IDENTITY (1,1),
+		Room_Name NVARCHAR(50) NOT NULL,
+		Room_Status NVARCHAR(50) NOT NULL
+	PRIMARY KEY CLUSTERED (Room_id)
+	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY];
+	GO
+
+
 -- ========================
 -- 1. Bảng KitTemplate
 -- ========================
@@ -28,6 +43,22 @@ CREATE TABLE KitTemplate (
 	KitTemplate_Url_Img NVARCHAR(MAX) NULL,
     KitTemplate_Status NVARCHAR(50) NOT NULL
 PRIMARY KEY CLUSTERED ([KitTemplate_id])
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+GO
+
+-- ========================
+-- 1. Bảng Quan hệ giữa Room và KitTemplate
+-- ========================
+CREATE TABLE KitTemplate_Room (
+    KitTemplate_Room_id INT NOT NULL IDENTITY (1,1),
+	KitTemplate_id NVARCHAR(50) NOT NULL,
+	Room_id INT NOT NULL,
+	KitTemplate_Room_Quantity INT NOT NULL,
+    KitTemplate_Status NVARCHAR(50) NOT NULL
+	FOREIGN KEY (KitTemplate_id) REFERENCES KitTemplate(KitTemplate_id),
+	FOREIGN KEY (Room_id) REFERENCES Room(Room_id),
+PRIMARY KEY CLUSTERED (KitTemplate_Room_id)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
 GO
@@ -72,6 +103,7 @@ GO
 CREATE TABLE Kit (
     Kit_id NVARCHAR(50) NOT NULL,
 	KitTemplate_id NVARCHAR(50) NOT NULL,
+	Room_id INT NULL,
     Kit_Name NVARCHAR(50) NOT NULL,
     Kit_Description NVARCHAR(MAX) NULL,
 	Kit_Url_Img NVARCHAR(MAX) NULL,
@@ -79,6 +111,7 @@ CREATE TABLE Kit (
     Kit_CreateDate DATE NOT NULL,
     Kit_Status NVARCHAR(50) NOT NULL,
 	FOREIGN KEY (KitTemplate_id) REFERENCES KitTemplate(KitTemplate_id),
+	FOREIGN KEY (Room_id) REFERENCES Room(Room_id),
 PRIMARY KEY CLUSTERED ([Kit_id])
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
@@ -186,6 +219,22 @@ WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW
 ) ON [PRIMARY];
 GO
 
+-- ========================
+-- 1. Bảng Quan hệ giữa Room và EquipmentType
+-- ========================
+CREATE TABLE EquipmentType_Room (
+    EquipmentType_Room_id INT NOT NULL IDENTITY (1,1),
+	EquipmentType_id NVARCHAR(50) NOT NULL,
+	Room_id INT NOT NULL,
+	EquipmentType_Room_Quantity INT NOT NULL,
+    KitTemplate_Status NVARCHAR(50) NOT NULL
+	FOREIGN KEY (EquipmentType_id) REFERENCES EquipmentType(EquipmentType_id),
+	FOREIGN KEY (Room_id) REFERENCES Room(Room_id),
+PRIMARY KEY CLUSTERED (EquipmentType_Room_id)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+GO
+
 
 -- ========================
 -- 11. Bảng Equipment
@@ -193,6 +242,7 @@ GO
 CREATE TABLE Equipment (
     Equipment_id NVARCHAR(50) NOT NULL,
 	EquipmentType_id NVARCHAR(50) NOT NULL,
+	Room_id INT NULL,
     Equipment_Name NVARCHAR(50) NOT NULL,
 	Equipment_Code NVARCHAR(50) NOT NULL,
     Equipment_NumberSerial NVARCHAR(50) NOT NULL,
@@ -201,6 +251,7 @@ CREATE TABLE Equipment (
     Equipment_QR NVARCHAR(MAX) NOT NULL,
     Equipment_Status NVARCHAR(50) NOT NULL
 	FOREIGN KEY (EquipmentType_id) REFERENCES [EquipmentType](EquipmentType_id),
+	FOREIGN KEY (Room_id) REFERENCES Room(Room_id),
 PRIMARY KEY CLUSTERED ([Equipment_id])
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
@@ -213,6 +264,7 @@ CREATE TABLE Lab (
     Lab_id INT NOT NULL IDENTITY (1,1),
 	Subject_id INT NOT NULL,
     Lab_Name NVARCHAR(50) NOT NULL,
+	Lab_NumberOfPractice INT NOT NULL,
     Lab_Request NVARCHAR(MAX) NOT NULL,
     Lab_Target NVARCHAR(MAX) NOT NULL,
     Lab_Status NVARCHAR(50) NOT NULL
@@ -222,6 +274,20 @@ WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW
 ) ON [PRIMARY];
 GO
 
+-- ========================
+-- 1. Bảng Quan hệ giữa Room và Lab
+-- ========================
+CREATE TABLE Room_Lab (
+    Room_Lab_id INT NOT NULL IDENTITY (1,1),
+	Lab_id INT NOT NULL,
+	Room_id INT NOT NULL,
+    Room_Lab_id_Status NVARCHAR(50) NOT NULL
+	FOREIGN KEY (Lab_id) REFERENCES Lab(Lab_id),
+	FOREIGN KEY (Room_id) REFERENCES Room(Room_id),
+PRIMARY KEY CLUSTERED (Room_Lab_id)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+GO
 
 -- ========================
 -- 13. Bảng Quan hệ giữa Lab và KitTemplate
@@ -229,8 +295,10 @@ GO
 CREATE TABLE Lab_KitTemplate (
     Lab_KitTemplate_id INT NOT NULL IDENTITY (1,1),
 	KitTemplate_id NVARCHAR(50) NOT NULL,
+	Lab_id INT NOT NULL,
     Lab_KitTemplate_Status NVARCHAR(50) NOT NULL
 	FOREIGN KEY (KitTemplate_id) REFERENCES [KitTemplate](KitTemplate_id),
+	FOREIGN KEY (Lab_id) REFERENCES Lab(Lab_id),
 PRIMARY KEY CLUSTERED ([Lab_KitTemplate_id] ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
@@ -243,8 +311,10 @@ GO
 CREATE TABLE Lab_EquipmentType (
     Lab_EquipmentType_id INT NOT NULL IDENTITY (1,1),
 	EquipmentType_id NVARCHAR(50) NOT NULL,
+	Lab_id INT NOT NULL,
     Lab_EquipmentType_Status NVARCHAR(50) NOT NULL
 	FOREIGN KEY (EquipmentType_id) REFERENCES [EquipmentType](EquipmentType_id),
+	FOREIGN KEY (Lab_id) REFERENCES Lab(Lab_id),
 PRIMARY KEY CLUSTERED ([Lab_EquipmentType_id] ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
@@ -291,13 +361,13 @@ GO
 -- ========================
 CREATE TABLE Class (
     Class_id INT NOT NULL IDENTITY (1,1),
-	Subject_id INT NOT NULL,
+	Semester_Subject_id INT NOT NULL,
 	Lecturer_id UNIQUEIDENTIFIER NULL,
 	ScheduleType_id INT NULL,
     Class_Name NVARCHAR(50) NOT NULL,
 	Class_Description NVARCHAR(MAX) NULL,
 	Class_Status NVARCHAR(50) NOT NULL,
-    FOREIGN KEY (Subject_id) REFERENCES [Subject](Subject_id),
+    FOREIGN KEY (Semester_Subject_id) REFERENCES [Semester_Subject]([Semester_Subject_id]),
 	FOREIGN KEY (Lecturer_id) REFERENCES [User]([User_id]),
 	FOREIGN KEY (ScheduleType_id) REFERENCES [ScheduleType](ScheduleType_id),
 PRIMARY KEY CLUSTERED ([Class_id] ASC)
@@ -332,6 +402,7 @@ CREATE TABLE Schedule (
 	Schedule_Name NVARCHAR(50) NOT NULL,
 	Schedule_Date DATE NOT NULL,
 	Schedule_Description NVARCHAR(MAX) NULL,
+	Schedule_Status NVARCHAR(50) NOT NULL,
     FOREIGN KEY (Class_id) REFERENCES Class(Class_id),
 PRIMARY KEY CLUSTERED ([Schedule_id] ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -374,18 +445,18 @@ GO
 -- ========================
 -- 21. Bảng Quan hệ giữa Team và Equipment
 -- ========================
-CREATE TABLE Team_EquipmentType (
-    Team_EquipmentType_id INT NOT NULL IDENTITY (1,1), 
+CREATE TABLE Team_Equipment (
+    Team_Equipment_id INT NOT NULL IDENTITY (1,1), 
 	Team_id INT NOT NULL,
-	EquipmentType_id NVARCHAR(50) NOT NULL,
-    Team_EquipmentType_Name NVARCHAR(50) NOT NULL,
-    Team_EquipmentType_Description NVARCHAR(MAX) NULL,
-	Team_EquipmentType_DateBorrow DATETIME2 NOT NULL,
-	Team_EquipmentType_DateGiveBack DATE NULL,
-	Team_EquipmentType_Status NVARCHAR(50) NOT NULL,
+	Equipment_id NVARCHAR(50) NOT NULL,
+    Team_Equipment_Name NVARCHAR(50) NOT NULL,
+    Team_Equipment_Description NVARCHAR(MAX) NULL,
+	Team_Equipment_DateBorrow DATETIME2 NOT NULL,
+	Team_Equipment_DateGiveBack DATETIME2 NULL,
+	Team_Equipment_Status NVARCHAR(50) NOT NULL,
 	FOREIGN KEY (Team_id) REFERENCES Team(Team_id),
-	FOREIGN KEY (EquipmentType_id) REFERENCES EquipmentType(EquipmentType_id),
-PRIMARY KEY CLUSTERED (Team_EquipmentType_id ASC)
+	FOREIGN KEY (Equipment_id) REFERENCES Equipment(Equipment_id),
+PRIMARY KEY CLUSTERED (Team_Equipment_id ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
 GO
@@ -394,22 +465,48 @@ GO
 -- ========================
 -- 22. Bảng Quan hệ giữa Team và Kit
 -- ========================
-CREATE TABLE Team_KitTemplate (
-    Team_KitTemplate_id INT NOT NULL IDENTITY (1,1),
+CREATE TABLE Team_Kit (
+    Team_Kit_id INT NOT NULL IDENTITY (1,1),
 	Team_id INT NOT NULL,
-	KitTemplate_id NVARCHAR(50) NOT NULL,
-    Team_KitTemplate_Name NVARCHAR(50) NOT NULL,
-    Team_KitTemplate_Description NVARCHAR(MAX) NULL,
-	Team_KitTemplate_DateBorrow DATE NOT NULL,
-	Team_KitTemplate_DateGiveBack DATE NULL,
-	Team_KitTemplate_Status NVARCHAR(50) NOT NULL,
+	Kit_id NVARCHAR(50) NOT NULL,
+    Team_Kit_Name NVARCHAR(50) NOT NULL,
+    Team_Kit_Description NVARCHAR(MAX) NULL,
+	Team_Kit_DateBorrow DATE NOT NULL,
+	Team_Kit_DateGiveBack DATE NULL,
+	Team_Kit_Status NVARCHAR(50) NOT NULL,
 	FOREIGN KEY (Team_id) REFERENCES Team(Team_id),
-	FOREIGN KEY (KitTemplate_id) REFERENCES KitTemplate(KitTemplate_id),
-PRIMARY KEY CLUSTERED (Team_KitTemplate_id ASC)
+	FOREIGN KEY (Kit_id) REFERENCES Kit(Kit_id),
+PRIMARY KEY CLUSTERED (Team_Kit_id ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
 GO
 
+
+-- ========================
+-- 23. Bảng RegistraionSchedule
+-- ========================
+CREATE TABLE RegistraionSchedule (
+    RegistraionSchedule_id INT NOT NULL IDENTITY (1,1),
+	RegistraionSchedule_Name NVARCHAR(50) NOT NULL,
+	[Teaacher_id] UNIQUEIDENTIFIER NOT NULL,
+	Class_id INT NOT NULL,
+	Lab_id INT NOT NULL,
+	Room_id INT NOT NULL,
+	Slot_id INT NOT NULL,
+	RegistraionSchedule_Date DATETIME2 NOT NULL,
+    RegistraionSchedule_Description NVARCHAR(MAX) NULL,
+    RegistraionSchedule_Note NVARCHAR(MAX) NULL,
+	RegistraionSchedule_CreateDate DATE NOT NULL,
+    RegistraionSchedule_Status NVARCHAR(50) NOT NULL
+	FOREIGN KEY (Teaacher_id) REFERENCES [User]([User_id]),
+	FOREIGN KEY (Class_id) REFERENCES Class(Class_id),
+	FOREIGN KEY (Room_id) REFERENCES Room(Room_id),
+	FOREIGN KEY (Lab_id) REFERENCES Lab(Lab_id),
+	FOREIGN KEY (Slot_id) REFERENCES Slot(Slot_id),
+PRIMARY KEY CLUSTERED (RegistraionSchedule_id ASC)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+GO
 
 -- ========================
 -- 23. Bảng Report
@@ -417,13 +514,16 @@ GO
 CREATE TABLE Report (
     Report_id INT NOT NULL IDENTITY (1,1),
 	[User_id] UNIQUEIDENTIFIER NOT NULL,
-	Schedule_id INT NOT NULL,
+	RegistraionSchedule_id INT NOT NULL,
+	Equipment_id NVARCHAR(50) NOT NULL,
     Report_Title NVARCHAR(50) NOT NULL,
     Report_Description NVARCHAR(MAX) NULL,
+	Report_Note NVARCHAR(MAX) NULL,
     Report_CreateDate DATETIME NOT NULL,
     Report_Status NVARCHAR(50) NOT NULL
 	FOREIGN KEY ([User_id]) REFERENCES [User]([User_id]),
-	FOREIGN KEY (Schedule_id) REFERENCES Schedule(Schedule_id),
+	FOREIGN KEY (RegistraionSchedule_id) REFERENCES RegistraionSchedule(RegistraionSchedule_id),
+	FOREIGN KEY (Equipment_id) REFERENCES Equipment(Equipment_id),
 PRIMARY KEY CLUSTERED ([Report_id] ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
@@ -437,15 +537,38 @@ GO
 -- ========================
 CREATE TABLE Grade (
     Grade_id INT NOT NULL IDENTITY (1,1),
-	[User_id] UNIQUEIDENTIFIER NOT NULL,
+	[Teacher_id] UNIQUEIDENTIFIER NOT NULL,
+	RegistraionSchedule_id INT NOT NULL,
 	Team_id INT NOT NULL,
-    Lab_id INT NOT NULL,
-    Grade_Description NVARCHAR(MAX) NULL,
+    Grade_Score INT NOT NULL,
+	Grade_Description NVARCHAR(MAX) NULL,
+	Grade_Date DATETIME2 NOT NULL,
     Grade_Status NVARCHAR(50) NOT NULL
-	FOREIGN KEY ([User_id]) REFERENCES [User]([User_id]),
+	FOREIGN KEY ([Teacher_id]) REFERENCES [User]([User_id]),
+	FOREIGN KEY (RegistraionSchedule_id) REFERENCES RegistraionSchedule(RegistraionSchedule_id),
 	FOREIGN KEY (Team_id) REFERENCES Team(Team_id),
-	FOREIGN KEY (Lab_id) REFERENCES Lab(Lab_id),
 PRIMARY KEY CLUSTERED ([Grade_id] ASC)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+GO
+
+-- ========================
+-- 25. Bảng Grade
+-- ========================
+CREATE TABLE GradeDescription (
+    GradeDescription_id INT NOT NULL IDENTITY (1,1),
+	Grade_id INT NOT NULL,
+	[Student_id] UNIQUEIDENTIFIER NOT NULL,
+	Class_id INT NOT NULL,
+	Lab_id INT NOT NULL,
+    GradeDescription_Score INT NOT NULL,
+	GradeDescription_Description NVARCHAR(MAX) NULL,
+    GradeDescription_Status NVARCHAR(50) NOT NULL
+	FOREIGN KEY ([Grade_id]) REFERENCES [Grade]([Grade_id]),
+	FOREIGN KEY ([Student_id]) REFERENCES [User]([User_id]),
+	FOREIGN KEY (Class_id) REFERENCES Class(Class_id),
+	FOREIGN KEY (Lab_id) REFERENCES Lab(Lab_id),
+PRIMARY KEY CLUSTERED (GradeDescription_id ASC)
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
 GO

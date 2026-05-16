@@ -13,6 +13,7 @@ namespace DataLayer.Entities
 
         public string KitId { get; set; } = null!;
         public string KitTemplateId { get; set; } = null!;
+        public int? RoomId { get; set; }
         public string KitName { get; set; } = null!;
         public string? KitDescription { get; set; }
         public string? KitUrlImg { get; set; }
@@ -21,6 +22,7 @@ namespace DataLayer.Entities
         public string KitStatus { get; set; } = null!;
 
         public virtual KitTemplate KitTemplate { get; set; } = null!;
+        public virtual Room? Room { get; set; }
         public virtual ICollection<KitAccessory> KitAccessories { get; set; }
         public virtual ICollection<TeamKit> TeamKits { get; set; }
     }

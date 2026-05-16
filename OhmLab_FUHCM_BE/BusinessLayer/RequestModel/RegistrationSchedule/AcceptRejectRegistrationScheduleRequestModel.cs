@@ -9,6 +9,5 @@ namespace BusinessLayer.RequestModel.RegistrationSchedule
     public class AcceptRejectRegistrationScheduleRequestModel
     {
         public int RegistrationScheduleId { get; set; }
-        public string? RegistrationScheduleNote { get; set; }
     }
 }

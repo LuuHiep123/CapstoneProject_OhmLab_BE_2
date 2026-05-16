@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class ClassUserRepository : IClassUserRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public ClassUserRepository(db_abadcb_ohmlabContext context)
+        public ClassUserRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _DBContext = context;
         }
@@ -24,8 +24,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.ClassUsers
                     .Include(cu => cu.Class)
-                        .ThenInclude(c => c.Subject)
-                            .ThenInclude(s => s.SemesterSubjects.Where(ss => ss.Semester != null))
+                        .ThenInclude(c => c.SemesterSubject)
                                 .ThenInclude(ss => ss.Semester)
                     .Include(cu => cu.User)
                     .ToListAsync();
@@ -42,8 +41,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.ClassUsers
                     .Include(cu => cu.Class)
-                        .ThenInclude(c => c.Subject)
-                            .ThenInclude(s => s.SemesterSubjects.Where(ss => ss.Semester != null))
+                        .ThenInclude(c => c.SemesterSubject)
                                 .ThenInclude(ss => ss.Semester)
                     .Include(cu => cu.User)
                     .FirstOrDefaultAsync(cu => cu.ClassUserId == id);
@@ -60,8 +58,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.ClassUsers
                     .Include(cu => cu.Class)
-                        .ThenInclude(c => c.Subject)
-                            .ThenInclude(s => s.SemesterSubjects.Where(ss => ss.Semester != null))
+                        .ThenInclude(c => c.SemesterSubject)
                                 .ThenInclude(ss => ss.Semester)
                     .Include(cu => cu.User)
                     .Where(cu => cu.ClassId == classId)
@@ -79,8 +76,7 @@ namespace DataLayer.Repository.Implement
             {
                 return await _DBContext.ClassUsers
                     .Include(cu => cu.Class)
-                        .ThenInclude(c => c.Subject)
-                            .ThenInclude(s => s.SemesterSubjects.Where(ss => ss.Semester != null))
+                        .ThenInclude(c => c.SemesterSubject)
                                 .ThenInclude(ss => ss.Semester)
                     .Include(cu => cu.User)
                     .Where(cu => cu.UserId == userId)

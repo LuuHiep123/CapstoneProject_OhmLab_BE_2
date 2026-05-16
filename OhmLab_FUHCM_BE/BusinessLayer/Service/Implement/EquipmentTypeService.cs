@@ -237,7 +237,7 @@ namespace BusinessLayer.Service.Implement
                     };
                 }
                 var equipmentType = await _equipmentTypeRepository.GetEquipmentTypeById(id);
-                if (equipmentType != null || !equipmentType.EquipmentTypeStatus.Equals("Delete"))
+                if (equipmentType != null && !equipmentType.EquipmentTypeStatus.Equals("Delete"))
                 {
                     var result = _mapper.Map(model, equipmentType);
                     await _equipmentTypeRepository.UpdateEquipmentType(result);

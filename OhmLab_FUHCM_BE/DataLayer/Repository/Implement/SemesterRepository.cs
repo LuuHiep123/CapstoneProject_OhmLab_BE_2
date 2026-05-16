@@ -9,8 +9,8 @@ namespace DataLayer.Repository.Implement
 {
     public class SemesterRepository : ISemesterRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
-        public SemesterRepository(db_abadcb_ohmlabContext context)
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
+        public SemesterRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _DBContext = context;
         }

@@ -9,9 +9,9 @@ namespace DataLayer.Repository.Implement
 {
     public class SubjectRepository : ISubjectRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public SubjectRepository(db_abadcb_ohmlabContext context)
+        public SubjectRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

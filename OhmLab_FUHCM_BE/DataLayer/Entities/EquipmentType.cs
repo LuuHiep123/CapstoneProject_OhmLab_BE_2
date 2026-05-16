@@ -8,6 +8,7 @@ namespace DataLayer.Entities
         public EquipmentType()
         {
             Equipment = new HashSet<Equipment>();
+            EquipmentTypeRooms = new HashSet<EquipmentTypeRoom>();
             LabEquipmentTypes = new HashSet<LabEquipmentType>();
         }
 
@@ -21,6 +22,7 @@ namespace DataLayer.Entities
         public string EquipmentTypeStatus { get; set; } = null!;
 
         public virtual ICollection<Equipment> Equipment { get; set; }
+        public virtual ICollection<EquipmentTypeRoom> EquipmentTypeRooms { get; set; }
         public virtual ICollection<LabEquipmentType> LabEquipmentTypes { get; set; }
     }
 }

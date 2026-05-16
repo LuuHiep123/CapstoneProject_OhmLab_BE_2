@@ -95,7 +95,7 @@ namespace BusinessLayer.Service.Implement
                 kit.KitId = kidId;
                 kit.KitStatus = "Valid";
                 kit.KitCreateDate = DateTime.Now;
-                kit.KitUrlQr = GenerateQRCodeBase64(kidId);
+                kit.KitUrlQr = GenerateQRCodeBase64("https://swd392be.io.vn/api/kit/" + kidId);
                 kit.KitUrlImg = kitTemplate.KitTemplateUrlImg;
 
                 var listAccessoryKitTemplate = await _accessoryKitTemplateRepository.GetAllAccessoryKitTemplate();

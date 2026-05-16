@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class KitTemplateRepository : IKitTemplateRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public KitTemplateRepository(db_abadcb_ohmlabContext context)
+        public KitTemplateRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }

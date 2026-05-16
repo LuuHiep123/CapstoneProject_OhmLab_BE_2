@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class TeamEquipmentRepository : ITeamEquipmentRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public TeamEquipmentRepository(db_abadcb_ohmlabContext OhmLab_DBContext)
+        public TeamEquipmentRepository(DBContext.db_abadcb_ohmlabContext OhmLab_DBContext)
         {
             _DBContext = OhmLab_DBContext;
         }

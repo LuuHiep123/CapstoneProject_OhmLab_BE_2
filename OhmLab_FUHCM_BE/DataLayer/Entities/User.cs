@@ -9,11 +9,11 @@ namespace DataLayer.Entities
         {
             ClassUsers = new HashSet<ClassUser>();
             Classes = new HashSet<Class>();
+            GradeDescriptions = new HashSet<GradeDescription>();
             Grades = new HashSet<Grade>();
+            RegistraionSchedules = new HashSet<RegistraionSchedule>();
             Reports = new HashSet<Report>();
             TeamUsers = new HashSet<TeamUser>();
-            RegistrationSchedules = new HashSet<RegistrationSchedule>();
-
         }
 
         public Guid UserId { get; set; }
@@ -26,10 +26,10 @@ namespace DataLayer.Entities
 
         public virtual ICollection<ClassUser> ClassUsers { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
+        public virtual ICollection<GradeDescription> GradeDescriptions { get; set; }
         public virtual ICollection<Grade> Grades { get; set; }
+        public virtual ICollection<RegistraionSchedule> RegistraionSchedules { get; set; }
         public virtual ICollection<Report> Reports { get; set; }
         public virtual ICollection<TeamUser> TeamUsers { get; set; }
-        public virtual ICollection<RegistrationSchedule> RegistrationSchedules { get; set; }
-
     }
 }

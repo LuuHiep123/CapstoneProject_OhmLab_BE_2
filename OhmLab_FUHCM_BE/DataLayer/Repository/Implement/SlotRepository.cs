@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class SlotRepository : ISlotRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public SlotRepository(db_abadcb_ohmlabContext context)
+        public SlotRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _DBContext = context;
         }

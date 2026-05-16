@@ -10,9 +10,9 @@ namespace DataLayer.Repository.Implement
 {
     public class LabRepository : ILabRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public LabRepository(db_abadcb_ohmlabContext context)
+        public LabRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }
@@ -61,7 +61,7 @@ namespace DataLayer.Repository.Implement
             // Lấy tất cả SubjectId mà lecturer này dạy (thông qua Class)
             var subjectIds = await _context.Classes
                 .Where(c => c.LecturerId.ToString() == lecturerId)
-                .Select(c => c.SubjectId)
+                .Select(c => c.SemesterSubject.SubjectId)
                 .Distinct()
                 .ToListAsync();
 
@@ -81,7 +81,7 @@ namespace DataLayer.Repository.Implement
             // Lấy SubjectId từ class
             var classEntity = await _context.Classes
                 .Where(c => c.ClassId == classId)
-                .Select(c => c.SubjectId)
+                .Select(c => c.SemesterSubject.SubjectId)
                 .FirstOrDefaultAsync();
 
             if (classEntity == 0)

@@ -11,9 +11,9 @@ namespace DataLayer.Repository.Implement
 {
     public class KitRepository : IKitRepository
     {
-        private readonly db_abadcb_ohmlabContext _context;
+        private readonly DBContext.db_abadcb_ohmlabContext _context;
 
-        public KitRepository(db_abadcb_ohmlabContext context)
+        public KitRepository(DBContext.db_abadcb_ohmlabContext context)
         {
             _context = context;
         }
@@ -52,6 +52,7 @@ namespace DataLayer.Repository.Implement
             {
                 var listkit = await _context.Kits
                     .Include(k => k.KitTemplate)
+                    .Include(k => k.Room)
                     .ToListAsync();
                 return listkit;
             }
@@ -65,6 +66,7 @@ namespace DataLayer.Repository.Implement
         {
             var listkit = await _context.Kits
                 .Include(k => k.KitTemplate)
+                .Include(k => k.Room)
                 .Where(k => k.KitTemplateId.Equals(kitTemplateId))
                 .ToListAsync();
             return listkit;
@@ -75,6 +77,7 @@ namespace DataLayer.Repository.Implement
             try
             {
                 var kit = await _context.Kits
+                    .Include(k => k.Room)
                     .FirstOrDefaultAsync(k => k.KitId.Equals(id));
                 return kit;
             }
@@ -89,6 +92,7 @@ namespace DataLayer.Repository.Implement
             try
             {
                 var kit = await _context.Kits
+                    .Include(k => k.Room)
                     .FirstOrDefaultAsync(k => k.KitName.Equals(name));
                 return kit;
             }

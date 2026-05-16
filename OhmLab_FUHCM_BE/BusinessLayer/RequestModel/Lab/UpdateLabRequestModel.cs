@@ -11,6 +11,7 @@ namespace BusinessLayer.RequestModel.Lab
         public string LabName { get; set; } = null!;
         [Required]
         public string LabRequest { get; set; } = null!;
+        public int LabNumberOfPractice { get; set; }
         [Required]
         public string LabTarget { get; set; } = null!;
         [Required]

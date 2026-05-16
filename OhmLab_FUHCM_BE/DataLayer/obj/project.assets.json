@@ -9872,11 +9872,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj",
+      "projectUniqueName": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj",
       "projectName": "DataLayer",
-      "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj",
+      "projectPath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\DataLayer\\DataLayer.csproj",
       "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-      "outputPath": "D:\\CN9\\Capstone_Project\\OhmLab\\CapstoneProject_OhmLab_BE\\OhmLab_FUHCM_BE\\DataLayer\\obj\\",
+      "outputPath": "D:\\CN9\\Capstone_Project\\OhmLab2\\CapstoneProject_OhmLab2_BE\\CapstoneProject_OhmLab_BE_2\\OhmLab_FUHCM_BE\\DataLayer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

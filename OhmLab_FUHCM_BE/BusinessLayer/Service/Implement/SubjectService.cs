@@ -20,14 +20,14 @@ namespace BusinessLayer.Service.Implement
         private readonly ISemesterRepository _semesterRepository;
         private readonly ISemesterSubjectRepository _semesterSubjectRepository;
         private readonly IMapper _mapper;
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DataLayer.DBContext.db_abadcb_ohmlabContext _DBContext;
 
-        public SubjectService(ISubjectRepository subjectRepository, 
-                            IClassRepository classRepository, 
+        public SubjectService(ISubjectRepository subjectRepository,
+                            IClassRepository classRepository,
                             ISemesterRepository semesterRepository,
                             ISemesterSubjectRepository semesterSubjectRepository,
                                                          IMapper mapper,
-                             db_abadcb_ohmlabContext DBContext)
+                             DataLayer.DBContext.db_abadcb_ohmlabContext DBContext)
         {
             _subjectRepository = subjectRepository;
             _classRepository = classRepository;
@@ -52,31 +52,10 @@ namespace BusinessLayer.Service.Implement
                     throw new ArgumentException("Mã môn học không được để trống!");
                 }
 
-                if (subjectModel.SemesterId <= 0)
-                {
-                    throw new ArgumentException("Semester ID phải lớn hơn 0!");
-                }
-
-                // Kiểm tra semester tồn tại
-                var semester = await _semesterRepository.GetByIdAsync(subjectModel.SemesterId);
-                if (semester == null)
-                {
-                    throw new ArgumentException($"Không tìm thấy semester với ID: {subjectModel.SemesterId}");
-                }
-
                 // Tạo subject
                 var subject = _mapper.Map<Subject>(subjectModel);
                 subject.SubjectStatus = "Active"; // Default status
                 await _subjectRepository.AddSubject(subject);
-
-                // Tạo SemesterSubject relationship
-                var semesterSubject = new SemesterSubject
-                {
-                    SubjectId = subject.SubjectId,
-                    SemesterId = subjectModel.SemesterId,
-                    SemesterSubject1 = "valid"
-                };
-                await _semesterSubjectRepository.AddAsync(semesterSubject);
             }
             catch (Exception ex)
             {
@@ -91,8 +70,8 @@ namespace BusinessLayer.Service.Implement
             {
                 // Kiểm tra Subject có đang được sử dụng bởi Class nào không
                 var classes = await _classRepository.GetAllAsync();
-                var usingClasses = classes.Where(c => c.SubjectId == id).ToList();
-                
+                var usingClasses = classes.Where(c => c.SemesterSubject.SubjectId == id).ToList();
+
                 if (usingClasses.Any())
                 {
                     // Nếu có Class đang sử dụng, không cho phép xóa
@@ -110,10 +89,6 @@ namespace BusinessLayer.Service.Implement
             if (subject == null)
                 return null;
 
-            // Lấy thông tin semester
-            var semesterSubject = await _semesterSubjectRepository.GetBySubjectIdAsync(id);
-            var semester = semesterSubject != null ? await _semesterRepository.GetByIdAsync(semesterSubject.SemesterId) : null;
-
             return new SubjectResponseModel
             {
                 SubjectId = subject.SubjectId,
@@ -121,8 +96,6 @@ namespace BusinessLayer.Service.Implement
                 SubjectCode = subject.SubjectCode,
                 SubjectDescription = subject.SubjectDescription,
                 SubjectStatus = subject.SubjectStatus,
-                SemesterId = semester?.SemesterId,
-                SemesterName = semester?.SemesterName
             };
         }
 
@@ -133,9 +106,6 @@ namespace BusinessLayer.Service.Implement
 
             foreach (var subject in subjects)
             {
-                // Lấy thông tin semester cho mỗi subject
-                var semesterSubject = await _semesterSubjectRepository.GetBySubjectIdAsync(subject.SubjectId);
-                var semester = semesterSubject != null ? await _semesterRepository.GetByIdAsync(semesterSubject.SemesterId) : null;
 
                 subjectResponses.Add(new SubjectResponseModel
                 {
@@ -144,8 +114,6 @@ namespace BusinessLayer.Service.Implement
                     SubjectCode = subject.SubjectCode,
                     SubjectDescription = subject.SubjectDescription,
                     SubjectStatus = subject.SubjectStatus,
-                    SemesterId = semester?.SemesterId,
-                    SemesterName = semester?.SemesterName
                 });
             }
 
@@ -186,7 +154,7 @@ namespace BusinessLayer.Service.Implement
             try
             {
                 var debugInfo = new List<string>();
-                
+
                 // 1. Kiểm tra Subject có tồn tại không
                 var subject = await _subjectRepository.GetSubjectById(subjectId);
                 if (subject == null)
@@ -199,7 +167,7 @@ namespace BusinessLayer.Service.Implement
                 var allSemesterSubjects = await _DBContext.SemesterSubjects
                     .Where(ss => ss.SubjectId == subjectId)
                     .ToListAsync();
-                
+
                 if (!allSemesterSubjects.Any())
                 {
                     debugInfo.Add($"❌ Không có record nào trong SemesterSubject với SubjectId = {subjectId}");
@@ -220,21 +188,6 @@ namespace BusinessLayer.Service.Implement
                 {
                     debugInfo.Add($"❌ Không có record nào với SemesterSubject1 = 'valid'");
                     debugInfo.Add("💡 Cần cập nhật status hoặc tạo record mới!");
-                }
-                else
-                {
-                    debugInfo.Add($"✅ Tìm thấy record valid: SemesterId = {validSemesterSubject.SemesterId}");
-                    
-                    // 4. Kiểm tra Semester có tồn tại không
-                    var semester = await _semesterRepository.GetByIdAsync(validSemesterSubject.SemesterId);
-                    if (semester == null)
-                    {
-                        debugInfo.Add($"❌ Semester với ID {validSemesterSubject.SemesterId} không tồn tại!");
-                    }
-                    else
-                    {
-                        debugInfo.Add($"✅ Semester tồn tại: {semester.SemesterName}");
-                    }
                 }
 
                 return string.Join("\n", debugInfo);
@@ -317,4 +270,4 @@ namespace BusinessLayer.Service.Implement
             }
         }
     }
-} 
+}

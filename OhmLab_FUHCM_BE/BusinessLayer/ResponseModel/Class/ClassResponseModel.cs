@@ -7,7 +7,9 @@ namespace BusinessLayer.ResponseModel.Class
     public class ClassResponseModel
     {
         public int ClassId { get; set; }
-        public int SubjectId { get; set; }
+        public int SemesterId { get; set; }
+        public int Subjectid { get; set; }
+
         public Guid? LecturerId { get; set; }
         public int? ScheduleTypeId { get; set; }
         public string ClassName { get; set; }

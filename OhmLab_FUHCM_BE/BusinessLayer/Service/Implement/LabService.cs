@@ -26,7 +26,7 @@ namespace BusinessLayer.Service.Implement
         private readonly IScheduleTypeRepository _scheduleTypeRepository; // ✅ THÊM MỚI
         private readonly IMapper _mapper;
 
-        public LabService(ILabRepository labRepository, 
+        public LabService(ILabRepository labRepository,
                          ILabEquipmentTypeRepository labEquipmentTypeRepository,
                          ILabKitTemplateRepository labKitTemplateRepository,
                          IEquipmentTypeRepository equipmentTypeRepository,
@@ -73,13 +73,13 @@ namespace BusinessLayer.Service.Implement
                     throw new ArgumentException("Mục tiêu lab không được để trống!");
                 }
 
-            
+
 
                 // Tạo lab
                 var lab = _mapper.Map<Lab>(labModel);
                 lab.LabStatus = labModel.LabStatus ?? "Active";
 
-             
+
 
                 await _labRepository.AddLab(lab);
 
@@ -142,7 +142,7 @@ namespace BusinessLayer.Service.Implement
                             {
                                 LabId = lab.LabId,
                                 KitTemplateId = kit.KitTemplateId,
-                                LabKitTemplateStatus = "Active"  
+                                LabKitTemplateStatus = "Active"
                             };
                             await _labKitTemplateRepository.CreateAsync(labKit);
                         }
@@ -172,23 +172,23 @@ namespace BusinessLayer.Service.Implement
         {
             var lab = await _labRepository.GetLabById(id);
             if (lab == null) return null;
-            
+
             var labResponse = _mapper.Map<LabResponseModel>(lab);
-            
-            
-            
+
+
+
             // ✅ THÊM MỚI: Lấy required equipment
             var labEquipments = await _labEquipmentTypeRepository.GetByLabIdAsync(lab.LabId);
             labResponse.RequiredEquipments = _mapper.Map<List<LabEquipmentResponseModel>>(labEquipments);
-            
-                                // ✅ THÊM MỚI: Lấy required kits
-                    var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
-                    labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
-                    
-                    // ✅ THÊM MỚI: Lấy slot info thông qua Subject
-                    await PopulateSlotInfoForLab(labResponse, lab.SubjectId);
-                    
-                    return labResponse;
+
+            // ✅ THÊM MỚI: Lấy required kits
+            var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
+            labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
+
+            // ✅ THÊM MỚI: Lấy slot info thông qua Subject
+            await PopulateSlotInfoForLab(labResponse, lab.SubjectId);
+
+            return labResponse;
         }
 
         public async Task<BusinessLayer.ResponseModel.BaseResponse.DynamicResponse<LabResponseModel>> GetLabsBySubjectId(int subjectId)
@@ -199,17 +199,17 @@ namespace BusinessLayer.Service.Implement
             foreach (var lab in labs)
             {
                 var labResponse = _mapper.Map<LabResponseModel>(lab);
-                
-               
-                
+
+
+
                 // ✅ THÊM MỚI: Lấy required equipment
                 var labEquipments = await _labEquipmentTypeRepository.GetByLabIdAsync(lab.LabId);
                 labResponse.RequiredEquipments = _mapper.Map<List<LabEquipmentResponseModel>>(labEquipments);
-                
+
                 // ✅ THÊM MỚI: Lấy required kits
                 var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
                 labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
-                
+
                 labResponses.Add(labResponse);
             }
 
@@ -254,20 +254,20 @@ namespace BusinessLayer.Service.Implement
                 foreach (var lab in labs)
                 {
                     var labResponse = _mapper.Map<LabResponseModel>(lab);
-                    
-                   
-                    
+
+
+
                     // ✅ THÊM MỚI: Lấy required equipment
                     var labEquipments = await _labEquipmentTypeRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredEquipments = _mapper.Map<List<LabEquipmentResponseModel>>(labEquipments);
-                    
+
                     // ✅ THÊM MỚI: Lấy required kits
                     var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
-                    
+
                     // ✅ THÊM MỚI: Lấy slot info thông qua Subject
                     await PopulateSlotInfoForLab(labResponse, lab.SubjectId);
-                    
+
                     labResponses.Add(labResponse);
                 }
 
@@ -323,20 +323,20 @@ namespace BusinessLayer.Service.Implement
                 foreach (var lab in labs)
                 {
                     var labResponse = _mapper.Map<LabResponseModel>(lab);
-                    
-                    
-                    
+
+
+
                     // ✅ THÊM MỚI: Lấy required equipment
                     var labEquipments = await _labEquipmentTypeRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredEquipments = _mapper.Map<List<LabEquipmentResponseModel>>(labEquipments);
-                    
+
                     // ✅ THÊM MỚI: Lấy required kits
                     var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
-                    
+
                     // ✅ THÊM MỚI: Lấy slot info thông qua Subject
                     await PopulateSlotInfoForLab(labResponse, lab.SubjectId);
-                    
+
                     labResponses.Add(labResponse);
                 }
 
@@ -385,48 +385,48 @@ namespace BusinessLayer.Service.Implement
         public async Task<BusinessLayer.ResponseModel.BaseResponse.DynamicResponse<LabResponseModel>> GetAllLabs()
         {
             try
-        {
-            var labs = await _labRepository.GetAllLabs();
+            {
+                var labs = await _labRepository.GetAllLabs();
                 var labResponses = new List<LabResponseModel>();
 
                 foreach (var lab in labs)
                 {
                     var labResponse = _mapper.Map<LabResponseModel>(lab);
-                    
-                 
-                    
+
+
+
                     // ✅ THÊM MỚI: Lấy required equipment
                     var labEquipments = await _labEquipmentTypeRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredEquipments = _mapper.Map<List<LabEquipmentResponseModel>>(labEquipments);
-                    
+
                     // ✅ THÊM MỚI: Lấy required kits
                     var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
-                    
+
                     // ✅ THÊM MỚI: Lấy slot info thông qua Subject
                     await PopulateSlotInfoForLab(labResponse, lab.SubjectId);
-                    
+
                     labResponses.Add(labResponse);
                 }
 
-            return new BusinessLayer.ResponseModel.BaseResponse.DynamicResponse<LabResponseModel>
-            {
-                Code = 200,
-                Success = true,
-                    Message = "Lấy danh sách lab thành công!",
-                Data = new BusinessLayer.ResponseModel.BaseResponse.MegaData<LabResponseModel>
+                return new BusinessLayer.ResponseModel.BaseResponse.DynamicResponse<LabResponseModel>
                 {
-                    PageData = labResponses,
-                    PageInfo = new BusinessLayer.ResponseModel.BaseResponse.PagingMetaData
+                    Code = 200,
+                    Success = true,
+                    Message = "Lấy danh sách lab thành công!",
+                    Data = new BusinessLayer.ResponseModel.BaseResponse.MegaData<LabResponseModel>
                     {
-                        Page = 1,
-                        Size = labResponses.Count,
-                        TotalItem = labResponses.Count,
-                        TotalPage = 1
-                    },
-                    SearchInfo = null
-                }
-            };
+                        PageData = labResponses,
+                        PageInfo = new BusinessLayer.ResponseModel.BaseResponse.PagingMetaData
+                        {
+                            Page = 1,
+                            Size = labResponses.Count,
+                            TotalItem = labResponses.Count,
+                            TotalPage = 1
+                        },
+                        SearchInfo = null
+                    }
+                };
             }
             catch (Exception ex)
             {
@@ -493,7 +493,7 @@ namespace BusinessLayer.Service.Implement
                 };
 
                 var result = await _labEquipmentTypeRepository.CreateAsync(labEquipment);
-                
+
                 // Lấy lại lab equipment với đầy đủ thông tin
                 var labEquipmentWithDetails = await _labEquipmentTypeRepository.GetByIdAsync(result.LabEquipmentTypeId);
                 var labEquipmentResponse = _mapper.Map<LabEquipmentResponseModel>(labEquipmentWithDetails);
@@ -666,7 +666,7 @@ namespace BusinessLayer.Service.Implement
                 };
 
                 var result = await _labKitTemplateRepository.CreateAsync(labKit);
-                
+
                 // Lấy lại lab kit với đầy đủ thông tin
                 var labKitWithDetails = await _labKitTemplateRepository.GetByIdAsync(result.LabKitTemplateId);
                 var labKitResponse = _mapper.Map<LabKitResponseModel>(labKitWithDetails);
@@ -793,19 +793,19 @@ namespace BusinessLayer.Service.Implement
             {
                 // ✅ DEBUG: Log lecturer ID
                 Console.WriteLine($"DEBUG GetLabsForMyClasses - LecturerId: {lecturerId}");
-                
+
                 // Lấy các lớp mà lecturer này phụ trách
                 var myClasses = await _classRepository.GetByLecturerIdAsync(lecturerId);
-                
+
                 // ✅ DEBUG: Log số lượng class và chi tiết
                 Console.WriteLine($"DEBUG - Found {myClasses.Count} classes for lecturer {lecturerId}");
                 foreach (var cls in myClasses)
                 {
                     Console.WriteLine($"DEBUG - Class: {cls.ClassId} - {cls.ClassName} - LecturerId: {cls.LecturerId}");
                 }
-                
-                var mySubjectIds = myClasses.Select(c => c.SubjectId).Distinct().ToList();
-                
+
+                var mySubjectIds = myClasses.Select(c => c.SemesterSubject.SubjectId).Distinct().ToList();
+
                 // Lấy các lab thuộc các môn mà lecturer dạy
                 var labs = new List<Lab>();
                 foreach (var subjectId in mySubjectIds)
@@ -818,19 +818,19 @@ namespace BusinessLayer.Service.Implement
                 foreach (var lab in labs)
                 {
                     var labResponse = _mapper.Map<LabResponseModel>(lab);
-                  
-                    
+
+
                     // ✅ THÊM MỚI: Lấy required equipment
                     var labEquipments = await _labEquipmentTypeRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredEquipments = _mapper.Map<List<LabEquipmentResponseModel>>(labEquipments);
-                    
+
                     // ✅ THÊM MỚI: Lấy required kits
                     var labKits = await _labKitTemplateRepository.GetByLabIdAsync(lab.LabId);
                     labResponse.RequiredKits = _mapper.Map<List<LabKitResponseModel>>(labKits);
-                    
+
                     // ✅ THÊM MỚI: Lấy slot info thông qua Subject
                     await PopulateSlotInfoForLab(labResponse, lab.SubjectId);
-                    
+
                     labResponses.Add(labResponse);
                 }
 
@@ -885,7 +885,7 @@ namespace BusinessLayer.Service.Implement
 
                 // Kiểm tra lab có tồn tại và thuộc môn học của lớp không
                 var lab = await _labRepository.GetLabById(labId);
-                if (lab?.SubjectId != classEntity.SubjectId)
+                if (lab?.SubjectId != classEntity.SemesterSubject.SubjectId)
                 {
                     return new BaseResponse<bool>
                     {
@@ -912,7 +912,7 @@ namespace BusinessLayer.Service.Implement
                 // Kiểm tra xung đột lịch học - lecturer không thể dạy nhiều lớp cùng slot trong cùng ngày
                 var existingSchedules = await _scheduleRepository.GetByDateAsync(scheduledDate);
                 var lecturerSchedules = existingSchedules.Where(s => s.Class?.LecturerId == lecturerId).ToList();
-                
+
                 foreach (var existingSchedule in lecturerSchedules)
                 {
                     // Kiểm tra xem có schedule nào của lecturer này cùng slot không
@@ -966,25 +966,25 @@ namespace BusinessLayer.Service.Implement
             {
                 // Tìm các lớp có môn học này để lấy slot info
                 var classesWithSubject = await _classRepository.GetAllAsync();
-                var classesForSubject = classesWithSubject.Where(c => c.SubjectId == subjectId).ToList();
-                
+                var classesForSubject = classesWithSubject.Where(c => c.SemesterSubject.SubjectId == subjectId).ToList();
+
                 if (classesForSubject.Any())
                 {
                     var firstClass = classesForSubject.First();
-                    
+
                     // ✅ THÊM MỚI: Populate class info
                     labResponse.ClassId = firstClass.ClassId;
                     labResponse.ClassName = firstClass.ClassName;
-                    
+
                     // ✅ THÊM MỚI: ƯU TIÊN lấy slot info từ Schedule đã tạo (nếu có)
                     var schedules = await _scheduleRepository.GetAllAsync();
-                    var labSchedule = schedules.FirstOrDefault(s => s.ClassId == firstClass.ClassId && 
-                                                                   s.ScheduleDescription != null && 
+                    var labSchedule = schedules.FirstOrDefault(s => s.ClassId == firstClass.ClassId &&
+                                                                   s.ScheduleDescription != null &&
                                                                    s.ScheduleDescription.Contains("Thực hành"));
                     if (labSchedule != null)
                     {
                         labResponse.ScheduledDate = labSchedule.ScheduleDate;
-                        
+
                         // ✅ THÊM MỚI: Parse ScheduleTypeId từ ScheduleDescription
                         if (labSchedule.ScheduleDescription.Contains("| ScheduleTypeId:"))
                         {
@@ -1003,7 +1003,7 @@ namespace BusinessLayer.Service.Implement
                             }
                         }
                     }
-                    
+
                     // ✅ FALLBACK: Lấy slot info từ Class → ScheduleType → Slot (nếu không có Schedule)
                     if (firstClass.ScheduleTypeId != null && labResponse.SlotId == null)
                     {
@@ -1025,4 +1025,4 @@ namespace BusinessLayer.Service.Implement
             }
         }
     }
-} 
+}

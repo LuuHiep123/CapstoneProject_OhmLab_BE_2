@@ -23,7 +23,7 @@ namespace OhmLab_FUHCM_BE.Controller
 
         // ✅ Head of Department: Tạo bài lab mẫu
         [HttpPost]
-        [Authorize(Roles = "HeadOfDepartment")]
+        [Authorize(Roles = "Admin,HeadOfDepartment")]
         public async Task<IActionResult> CreateLab([FromBody] CreateLabRequestModel labModel)
         {
             try
@@ -66,7 +66,7 @@ namespace OhmLab_FUHCM_BE.Controller
 
         // ✅ Lecturer: Xem lab cho các lớp mình phụ trách
         [HttpGet("my-classes")]
-        [Authorize(Roles = "Lecturer")]
+        [Authorize(Roles = ",Admin,Lecturer")]
         public async Task<IActionResult> GetLabsForMyClasses()
         {
             try
@@ -93,7 +93,7 @@ namespace OhmLab_FUHCM_BE.Controller
 
         // ✅ Lecturer: Tạo lịch lab cho lớp
         [HttpPost("{labId}/schedule")]
-        [Authorize(Roles = "Lecturer")]
+        [Authorize(Roles = "Admin,Lecturer")]
         public async Task<IActionResult> CreateLabSchedule(int labId, [FromBody] CreateLabScheduleRequestModel model)
         {
             try

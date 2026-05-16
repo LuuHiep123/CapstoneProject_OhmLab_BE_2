@@ -12,10 +12,10 @@ namespace DataLayer.Repository.Implement
 {
     public class TeamRepository : ITeamRepository
     {
-        private readonly db_abadcb_ohmlabContext _DBContext;
+        private readonly DBContext.db_abadcb_ohmlabContext _DBContext;
         private readonly ILogger<TeamRepository> _logger;
 
-        public TeamRepository(db_abadcb_ohmlabContext context, ILogger<TeamRepository> logger)
+        public TeamRepository(DBContext.db_abadcb_ohmlabContext context, ILogger<TeamRepository> logger)
         {
             _DBContext = context;
             _logger = logger;

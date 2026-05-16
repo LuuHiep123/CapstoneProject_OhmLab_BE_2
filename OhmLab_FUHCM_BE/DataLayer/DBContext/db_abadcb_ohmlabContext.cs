@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using DataLayer.Entities;
+﻿using DataLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 
 namespace DataLayer.DBContext
 {
@@ -24,15 +24,20 @@ namespace DataLayer.DBContext
         public virtual DbSet<ClassUser> ClassUsers { get; set; } = null!;
         public virtual DbSet<Equipment> Equipment { get; set; } = null!;
         public virtual DbSet<EquipmentType> EquipmentTypes { get; set; } = null!;
+        public virtual DbSet<EquipmentTypeRoom> EquipmentTypeRooms { get; set; } = null!;
         public virtual DbSet<Grade> Grades { get; set; } = null!;
+        public virtual DbSet<GradeDescription> GradeDescriptions { get; set; } = null!;
         public virtual DbSet<Kit> Kits { get; set; } = null!;
         public virtual DbSet<KitAccessory> KitAccessories { get; set; } = null!;
         public virtual DbSet<KitTemplate> KitTemplates { get; set; } = null!;
+        public virtual DbSet<KitTemplateRoom> KitTemplateRooms { get; set; } = null!;
         public virtual DbSet<Lab> Labs { get; set; } = null!;
         public virtual DbSet<LabEquipmentType> LabEquipmentTypes { get; set; } = null!;
         public virtual DbSet<LabKitTemplate> LabKitTemplates { get; set; } = null!;
-        public virtual DbSet<RegistrationSchedule> RegistrationSchedules { get; set; } = null!;
+        public virtual DbSet<RegistraionSchedule> RegistraionSchedules { get; set; } = null!;
         public virtual DbSet<Report> Reports { get; set; } = null!;
+        public virtual DbSet<Room> Rooms { get; set; } = null!;
+        public virtual DbSet<RoomLab> RoomLabs { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<ScheduleType> ScheduleTypes { get; set; } = null!;
         public virtual DbSet<Semester> Semesters { get; set; } = null!;
@@ -117,13 +122,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.AccessoryKitTemplates)
                     .HasForeignKey(d => d.AccessoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Accessory__Acces__540C7B00");
+                    .HasConstraintName("FK__Accessory__Acces__4222D4EF");
 
                 entity.HasOne(d => d.KitTemplate)
                     .WithMany(p => p.AccessoryKitTemplates)
                     .HasForeignKey(d => d.KitTemplateId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Accessory__KitTe__531856C7");
+                    .HasConstraintName("FK__Accessory__KitTe__412EB0B6");
             });
 
             modelBuilder.Entity<Class>(entity =>
@@ -146,23 +151,23 @@ namespace DataLayer.DBContext
 
                 entity.Property(e => e.ScheduleTypeId).HasColumnName("ScheduleType_id");
 
-                entity.Property(e => e.SubjectId).HasColumnName("Subject_id");
+                entity.Property(e => e.SemesterSubjectId).HasColumnName("Semester_Subject_id");
 
                 entity.HasOne(d => d.Lecturer)
                     .WithMany(p => p.Classes)
                     .HasForeignKey(d => d.LecturerId)
-                    .HasConstraintName("FK__Class__Lecturer___7C1A6C5A");
+                    .HasConstraintName("FK__Class__Lecturer___73BA3083");
 
                 entity.HasOne(d => d.ScheduleType)
                     .WithMany(p => p.Classes)
                     .HasForeignKey(d => d.ScheduleTypeId)
-                    .HasConstraintName("FK__Class__ScheduleT__7D0E9093");
+                    .HasConstraintName("FK__Class__ScheduleT__74AE54BC");
 
-                entity.HasOne(d => d.Subject)
+                entity.HasOne(d => d.SemesterSubject)
                     .WithMany(p => p.Classes)
-                    .HasForeignKey(d => d.SubjectId)
+                    .HasForeignKey(d => d.SemesterSubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Class__Subject_i__7B264821");
+                    .HasConstraintName("FK__Class__Semester___72C60C4A");
             });
 
             modelBuilder.Entity<ClassUser>(entity =>
@@ -185,13 +190,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.ClassUsers)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Class_Use__Class__7FEAFD3E");
+                    .HasConstraintName("FK__Class_Use__Class__778AC167");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.ClassUsers)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Class_Use__User___00DF2177");
+                    .HasConstraintName("FK__Class_Use__User___787EE5A0");
             });
 
             modelBuilder.Entity<Equipment>(entity =>
@@ -226,11 +231,18 @@ namespace DataLayer.DBContext
 
                 entity.Property(e => e.EquipmentTypeUrlImg).HasColumnName("EquipmentType_Url_Img");
 
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
                 entity.HasOne(d => d.EquipmentType)
                     .WithMany(p => p.Equipment)
                     .HasForeignKey(d => d.EquipmentTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Equipment__Equip__690797E6");
+                    .HasConstraintName("FK__Equipment__Equip__5BE2A6F2");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.Equipment)
+                    .HasForeignKey(d => d.RoomId)
+                    .HasConstraintName("FK__Equipment__Room___5CD6CB2B");
             });
 
             modelBuilder.Entity<EquipmentType>(entity =>
@@ -264,45 +276,123 @@ namespace DataLayer.DBContext
                 entity.Property(e => e.EquipmentTypeUrlImg).HasColumnName("EquipmentType_Url_Img");
             });
 
+            modelBuilder.Entity<EquipmentTypeRoom>(entity =>
+            {
+                entity.ToTable("EquipmentType_Room");
+
+                entity.Property(e => e.EquipmentTypeRoomId).HasColumnName("EquipmentType_Room_id");
+
+                entity.Property(e => e.EquipmentTypeId)
+                    .HasMaxLength(50)
+                    .HasColumnName("EquipmentType_id");
+
+                entity.Property(e => e.EquipmentTypeRoomQuantity).HasColumnName("EquipmentType_Room_Quantity");
+
+                entity.Property(e => e.KitTemplateStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("KitTemplate_Status");
+
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
+                entity.HasOne(d => d.EquipmentType)
+                    .WithMany(p => p.EquipmentTypeRooms)
+                    .HasForeignKey(d => d.EquipmentTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Equipment__KitTe__5812160E");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.EquipmentTypeRooms)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Equipment__Room___59063A47");
+            });
+
             modelBuilder.Entity<Grade>(entity =>
             {
                 entity.ToTable("Grade");
 
                 entity.Property(e => e.GradeId).HasColumnName("Grade_id");
 
-                entity.Property(e => e.Grade1).HasColumnName("Grade");  
+                entity.Property(e => e.GradeDate).HasColumnName("Grade_Date");
 
                 entity.Property(e => e.GradeDescription).HasColumnName("Grade_Description");
+
+                entity.Property(e => e.GradeScore).HasColumnName("Grade_Score");
 
                 entity.Property(e => e.GradeStatus)
                     .HasMaxLength(50)
                     .HasColumnName("Grade_Status");
 
-                entity.Property(e => e.LabId).HasColumnName("Lab_id");
+                entity.Property(e => e.RegistraionScheduleId).HasColumnName("RegistraionSchedule_id");
+
+                entity.Property(e => e.TeacherId).HasColumnName("Teacher_id");
 
                 entity.Property(e => e.TeamId).HasColumnName("Team_id");
 
-                entity.Property(e => e.UserId).HasColumnName("User_id");
+                entity.HasOne(d => d.RegistraionSchedule)
+                    .WithMany(p => p.Grades)
+                    .HasForeignKey(d => d.RegistraionScheduleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Grade__Registrai__18EBB532");
 
-                entity.Property(e => e.GradeTeamGrade).HasColumnName("Grade_TeamGrade");
-
-                entity.HasOne(d => d.Lab)
-                     .WithMany(p => p.Grades)
-                     .HasForeignKey(d => d.LabId)
-                     .OnDelete(DeleteBehavior.ClientSetNull)
-                     .HasConstraintName("FK__Grade__Lab_id__1A9EF37A");
+                entity.HasOne(d => d.Teacher)
+                    .WithMany(p => p.Grades)
+                    .HasForeignKey(d => d.TeacherId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Grade__Grade_Sta__17F790F9");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.Grades)
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Grade__Team_id__19AACF41");
+                    .HasConstraintName("FK__Grade__Team_id__19DFD96B");
+            });
 
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Grades)
-                    .HasForeignKey(d => d.UserId)
+            modelBuilder.Entity<GradeDescription>(entity =>
+            {
+                entity.ToTable("GradeDescription");
+
+                entity.Property(e => e.GradeDescriptionId).HasColumnName("GradeDescription_id");
+
+                entity.Property(e => e.ClassId).HasColumnName("Class_id");
+
+                entity.Property(e => e.GradeDescriptionDescription).HasColumnName("GradeDescription_Description");
+
+                entity.Property(e => e.GradeDescriptionScore).HasColumnName("GradeDescription_Score");
+
+                entity.Property(e => e.GradeDescriptionStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("GradeDescription_Status");
+
+                entity.Property(e => e.GradeId).HasColumnName("Grade_id");
+
+                entity.Property(e => e.LabId).HasColumnName("Lab_id");
+
+                entity.Property(e => e.StudentId).HasColumnName("Student_id");
+
+                entity.HasOne(d => d.Class)
+                    .WithMany(p => p.GradeDescriptions)
+                    .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Grade__Grade_Sta__18B6AB08");
+                    .HasConstraintName("FK__GradeDesc__Class__1EA48E88");
+
+                entity.HasOne(d => d.Grade)
+                    .WithMany(p => p.GradeDescriptions)
+                    .HasForeignKey(d => d.GradeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__GradeDesc__Grade__1CBC4616");
+
+                entity.HasOne(d => d.Lab)
+                    .WithMany(p => p.GradeDescriptions)
+                    .HasForeignKey(d => d.LabId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__GradeDesc__Lab_i__1F98B2C1");
+
+                entity.HasOne(d => d.Student)
+                    .WithMany(p => p.GradeDescriptions)
+                    .HasForeignKey(d => d.StudentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__GradeDesc__Stude__1DB06A4F");
             });
 
             modelBuilder.Entity<Kit>(entity =>
@@ -335,11 +425,18 @@ namespace DataLayer.DBContext
 
                 entity.Property(e => e.KitUrlQr).HasColumnName("Kit_Url_QR");
 
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
                 entity.HasOne(d => d.KitTemplate)
                     .WithMany(p => p.Kits)
                     .HasForeignKey(d => d.KitTemplateId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Kit__KitTemplate__56E8E7AB");
+                    .HasConstraintName("FK__Kit__KitTemplate__44FF419A");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.Kits)
+                    .HasForeignKey(d => d.RoomId)
+                    .HasConstraintName("FK__Kit__Room_id__45F365D3");
             });
 
             modelBuilder.Entity<KitAccessory>(entity =>
@@ -364,13 +461,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.KitAccessories)
                     .HasForeignKey(d => d.AccessoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Kit_Acces__Acces__5AB9788F");
+                    .HasConstraintName("FK__Kit_Acces__Acces__49C3F6B7");
 
                 entity.HasOne(d => d.Kit)
                     .WithMany(p => p.KitAccessories)
                     .HasForeignKey(d => d.KitId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Kit_Acces__Kit_i__59C55456");
+                    .HasConstraintName("FK__Kit_Acces__Kit_i__48CFD27E");
             });
 
             modelBuilder.Entity<KitTemplate>(entity =>
@@ -396,6 +493,37 @@ namespace DataLayer.DBContext
                 entity.Property(e => e.KitTemplateUrlImg).HasColumnName("KitTemplate_Url_Img");
             });
 
+            modelBuilder.Entity<KitTemplateRoom>(entity =>
+            {
+                entity.ToTable("KitTemplate_Room");
+
+                entity.Property(e => e.KitTemplateRoomId).HasColumnName("KitTemplate_Room_id");
+
+                entity.Property(e => e.KitTemplateId)
+                    .HasMaxLength(50)
+                    .HasColumnName("KitTemplate_id");
+
+                entity.Property(e => e.KitTemplateRoomQuantity).HasColumnName("KitTemplate_Room_Quantity");
+
+                entity.Property(e => e.KitTemplateStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("KitTemplate_Status");
+
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
+                entity.HasOne(d => d.KitTemplate)
+                    .WithMany(p => p.KitTemplateRooms)
+                    .HasForeignKey(d => d.KitTemplateId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__KitTempla__KitTe__3B75D760");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.KitTemplateRooms)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__KitTempla__Room___3C69FB99");
+            });
+
             modelBuilder.Entity<Lab>(entity =>
             {
                 entity.ToTable("Lab");
@@ -405,6 +533,8 @@ namespace DataLayer.DBContext
                 entity.Property(e => e.LabName)
                     .HasMaxLength(50)
                     .HasColumnName("Lab_Name");
+
+                entity.Property(e => e.LabNumberOfPractice).HasColumnName("Lab_NumberOfPractice");
 
                 entity.Property(e => e.LabRequest).HasColumnName("Lab_Request");
 
@@ -420,7 +550,7 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.Labs)
                     .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Lab__Lab_Status__6BE40491");
+                    .HasConstraintName("FK__Lab__Lab_Status__5FB337D6");
             });
 
             modelBuilder.Entity<LabEquipmentType>(entity =>
@@ -443,13 +573,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.LabEquipmentTypes)
                     .HasForeignKey(d => d.EquipmentTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Lab_Equip__Lab_E__72910220");
+                    .HasConstraintName("FK__Lab_Equip__Lab_E__6A30C649");
 
                 entity.HasOne(d => d.Lab)
                     .WithMany(p => p.LabEquipmentTypes)
                     .HasForeignKey(d => d.LabId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Lab_Equip__Lab_i__73852659");
+                    .HasConstraintName("FK__Lab_Equip__Lab_i__6B24EA82");
             });
 
             modelBuilder.Entity<LabKitTemplate>(entity =>
@@ -472,72 +602,88 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.LabKitTemplates)
                     .HasForeignKey(d => d.KitTemplateId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Lab_KitTe__Lab_K__6EC0713C");
+                    .HasConstraintName("FK__Lab_KitTe__Lab_K__66603565");
 
                 entity.HasOne(d => d.Lab)
                     .WithMany(p => p.LabKitTemplates)
                     .HasForeignKey(d => d.LabId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Lab_KitTe__Lab_i__6FB49575");
+                    .HasConstraintName("FK__Lab_KitTe__Lab_i__6754599E");
             });
 
-            modelBuilder.Entity<RegistrationSchedule>(entity =>
+            modelBuilder.Entity<RegistraionSchedule>(entity =>
             {
-                entity.ToTable("RegistrationSchedule");
+                entity.ToTable("RegistraionSchedule");
 
-                entity.Property(e => e.RegistrationScheduleId).HasColumnName("RegistrationSchedule_Id");
+                entity.Property(e => e.RegistraionScheduleId).HasColumnName("RegistraionSchedule_id");
 
-                entity.Property(e => e.RegistrationScheduleName)
-                    .HasMaxLength(100)
-                    .HasColumnName("RegistrationSchedule_Name");
+                entity.Property(e => e.ClassId).HasColumnName("Class_id");
 
-                entity.Property(e => e.RegistrationScheduleDate)
-                    .HasColumnType("date")
-                    .HasColumnName("RegistrationSchedule_Date");
+                entity.Property(e => e.LabId).HasColumnName("Lab_id");
 
-                entity.Property(e => e.RegistrationScheduleDescription)
-                    .HasMaxLength(200)
-                    .HasColumnName("RegistrationSchedule_Description");
-
-                entity.Property(e => e.RegistrationScheduleNote)
-                    .HasMaxLength(400)
-                    .HasColumnName("RegistrationSchedule_Note");
-
-                entity.Property(e => e.RegistrationScheduleStatus)
-                    .HasMaxLength(100)
-                    .HasColumnName("RegistrationSchedule_Status");
-                entity.Property(e => e.RegistrationScheduleCreateDate)
+                entity.Property(e => e.RegistraionScheduleCreateDate)
                     .HasColumnType("datetime2")
-                    .HasColumnName("RegistrationSchedule_CreateDate");
+                    .HasColumnName("RegistraionSchedule_CreateDate");
+                entity.Property(e => e.RegistraionScheduleCheckIn)
+                    .HasColumnType("datetime2")
+                    .HasColumnName("RegistraionSchedule_CheckIn");
+                entity.Property(e => e.RegistraionScheduleCheckOut)
+                    .HasColumnType("datetime2")
+                    .HasColumnName("RegistraionSchedule_CheckOut");
 
-                entity.Property(e => e.TeacherId).HasColumnName("Teacher_Id");
+                entity.Property(e => e.RegistraionScheduleDate)
+                .HasColumnType("date")
+                .HasColumnName("RegistraionSchedule_Date");
 
-                entity.Property(e => e.ClassId).HasColumnName("Class_Id");
+                entity.Property(e => e.RegistraionScheduleDescription).HasColumnName("RegistraionSchedule_Description");
 
-                entity.Property(e => e.LabId).HasColumnName("Lab_Id");
-                entity.Property(e => e.SlotId).HasColumnName("Slot_Id");
+                entity.Property(e => e.RegistraionScheduleName)
+                    .HasMaxLength(50)
+                    .HasColumnName("RegistraionSchedule_Name");
+                entity.Property(e => e.RegistraionSchedule_Url_Img_Checkout)
+                    .HasColumnName("RegistraionSchedule_Url_Img_Checkout");
 
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.RegistrationSchedules)
-                    .HasForeignKey(d => d.TeacherId)
-                    .HasConstraintName("FK__RegistrationSchedule__User_2");
+                entity.Property(e => e.RegistraionScheduleNote).HasColumnName("RegistraionSchedule_Note");
+
+                entity.Property(e => e.RegistraionScheduleStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("RegistraionSchedule_Status");
+
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
+                entity.Property(e => e.SlotId).HasColumnName("Slot_id");
+
+                entity.Property(e => e.TeaacherId).HasColumnName("Teaacher_id");
 
                 entity.HasOne(d => d.Class)
-                    .WithMany(p => p.RegistrationSchedules)
+                    .WithMany(p => p.RegistraionSchedules)
                     .HasForeignKey(d => d.ClassId)
-                    .HasConstraintName("FK__RegistrationSchedule__Class__1");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Registrai__Class__0D7A0286");
 
                 entity.HasOne(d => d.Lab)
-                    .WithMany(p => p.RegistrationSchedules)
+                    .WithMany(p => p.RegistraionSchedules)
                     .HasForeignKey(d => d.LabId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__RegistrationSchedule__Lab__3");
+                    .HasConstraintName("FK__Registrai__Lab_i__0F624AF8");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.RegistraionSchedules)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Registrai__Room___0E6E26BF");
 
                 entity.HasOne(d => d.Slot)
-                    .WithMany(p => p.RegistrationSchedules)
+                    .WithMany(p => p.RegistraionSchedules)
                     .HasForeignKey(d => d.SlotId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__RegistrationSchedule__Slot__4");    
+                    .HasConstraintName("FK__Registrai__Slot___10566F31");
+
+                entity.HasOne(d => d.Teaacher)
+                    .WithMany(p => p.RegistraionSchedules)
+                    .HasForeignKey(d => d.TeaacherId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Registrai__Regis__0C85DE4D");
             });
 
             modelBuilder.Entity<Report>(entity =>
@@ -546,11 +692,20 @@ namespace DataLayer.DBContext
 
                 entity.Property(e => e.ReportId).HasColumnName("Report_id");
 
+                entity.Property(e => e.EquipmentId)
+                    .HasMaxLength(50)
+                    .HasColumnName("Equipment_id");
+
+                entity.Property(e => e.RegistraionScheduleId).HasColumnName("RegistraionSchedule_id");
+
                 entity.Property(e => e.ReportCreateDate)
                     .HasColumnType("datetime")
                     .HasColumnName("Report_CreateDate");
 
                 entity.Property(e => e.ReportDescription).HasColumnName("Report_Description");
+                entity.Property(e => e.Url_Img).HasColumnName("Url_Img");
+
+                entity.Property(e => e.ReportNote).HasColumnName("Report_Note");
 
                 entity.Property(e => e.ReportStatus)
                     .HasMaxLength(50)
@@ -560,28 +715,67 @@ namespace DataLayer.DBContext
                     .HasMaxLength(50)
                     .HasColumnName("Report_Title");
 
-                entity.Property(e => e.ScheduleId).HasColumnName("Schedule_id");
-                entity.Property(e => e.RegistrationScheduleId).HasColumnName("RegistrationSchedule_id");
-
                 entity.Property(e => e.UserId).HasColumnName("User_id");
 
-                entity.HasOne(d => d.Schedule)
+                entity.HasOne(d => d.Equipment)
                     .WithMany(p => p.Reports)
-                    .HasForeignKey(d => d.ScheduleId)
+                    .HasForeignKey(d => d.EquipmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Report__Schedule__15DA3E5D");
+                    .HasConstraintName("FK__Report__Equipmen__151B244E");
 
-                entity.HasOne(d => d.RegistrationSchedule)
+                entity.HasOne(d => d.RegistraionSchedule)
                     .WithMany(p => p.Reports)
-                    .HasForeignKey(d => d.RegistrationScheduleId)
+                    .HasForeignKey(d => d.RegistraionScheduleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Report__RegistrationSchedule__2002");
+                    .HasConstraintName("FK__Report__Registra__14270015");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Reports)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Report__Report_S__14E61A24");
+                    .HasConstraintName("FK__Report__Report_S__1332DBDC");
+            });
+
+            modelBuilder.Entity<Room>(entity =>
+            {
+                entity.ToTable("Room");
+
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
+                entity.Property(e => e.RoomName)
+                    .HasMaxLength(50)
+                    .HasColumnName("Room_Name");
+
+                entity.Property(e => e.RoomStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("Room_Status");
+            });
+
+            modelBuilder.Entity<RoomLab>(entity =>
+            {
+                entity.ToTable("Room_Lab");
+
+                entity.Property(e => e.RoomLabId).HasColumnName("Room_Lab_id");
+
+                entity.Property(e => e.LabId).HasColumnName("Lab_id");
+
+                entity.Property(e => e.RoomId).HasColumnName("Room_id");
+
+                entity.Property(e => e.RoomLabIdStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("Room_Lab_id_Status");
+
+                entity.HasOne(d => d.Lab)
+                    .WithMany(p => p.RoomLabs)
+                    .HasForeignKey(d => d.LabId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Room_Lab__Room_L__628FA481");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.RoomLabs)
+                    .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Room_Lab__Room_i__6383C8BA");
             });
 
             modelBuilder.Entity<Schedule>(entity =>
@@ -602,11 +796,15 @@ namespace DataLayer.DBContext
                     .HasMaxLength(50)
                     .HasColumnName("Schedule_Name");
 
+                entity.Property(e => e.ScheduleStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("Schedule_Status");
+
                 entity.HasOne(d => d.Class)
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Schedule__Class___03BB8E22");
+                    .HasConstraintName("FK__Schedule__Class___7B5B524B");
             });
 
             modelBuilder.Entity<ScheduleType>(entity =>
@@ -635,7 +833,7 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.ScheduleTypes)
                     .HasForeignKey(d => d.SlotId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ScheduleT__Slot___7849DB76");
+                    .HasConstraintName("FK__ScheduleT__Slot___6FE99F9F");
             });
 
             modelBuilder.Entity<Semester>(entity =>
@@ -681,13 +879,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.SemesterSubjects)
                     .HasForeignKey(d => d.SemesterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Semester___Semes__6442E2C9");
+                    .HasConstraintName("FK__Semester___Semes__534D60F1");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.SemesterSubjects)
                     .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Semester___Subje__634EBE90");
+                    .HasConstraintName("FK__Semester___Subje__52593CB8");
             });
 
             modelBuilder.Entity<Slot>(entity =>
@@ -754,7 +952,7 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.Teams)
                     .HasForeignKey(d => d.ClassId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team__Class_id__0697FACD");
+                    .HasConstraintName("FK__Team__Class_id__7E37BEF6");
             });
 
             modelBuilder.Entity<TeamEquipment>(entity =>
@@ -768,12 +966,12 @@ namespace DataLayer.DBContext
                     .HasColumnName("Equipment_id");
 
                 entity.Property(e => e.TeamEquipmentDateBorrow)
-                    .HasColumnType("datetime2")
-                    .HasColumnName("Team_Equipment_DateBorrow");
+                .HasColumnType("datetime2")
+                .HasColumnName("Team_Equipment_DateBorrow");
 
                 entity.Property(e => e.TeamEquipmentDateGiveBack)
-                    .HasColumnType("datetime2")
-                    .HasColumnName("Team_Equipment_DateGiveBack");
+                .HasColumnType("datetime2")
+                .HasColumnName("Team_Equipment_DateGiveBack");
 
                 entity.Property(e => e.TeamEquipmentDescription).HasColumnName("Team_Equipment_Description");
 
@@ -791,13 +989,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.TeamEquipments)
                     .HasForeignKey(d => d.EquipmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team_Equi__Equip__0E391C95");
+                    .HasConstraintName("FK__Team_Equi__Equip__05D8E0BE");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.TeamEquipments)
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team_Equi__Team___0D44F85C");
+                    .HasConstraintName("FK__Team_Equi__Team___04E4BC85");
             });
 
             modelBuilder.Entity<TeamKit>(entity =>
@@ -813,11 +1011,11 @@ namespace DataLayer.DBContext
                 entity.Property(e => e.TeamId).HasColumnName("Team_id");
 
                 entity.Property(e => e.TeamKitDateBorrow)
-                    .HasColumnType("date")
+                    .HasColumnType("datetime2")
                     .HasColumnName("Team_Kit_DateBorrow");
 
                 entity.Property(e => e.TeamKitDateGiveBack)
-                    .HasColumnType("date")
+                    .HasColumnType("datetime2")
                     .HasColumnName("Team_Kit_DateGiveBack");
 
                 entity.Property(e => e.TeamKitDescription).HasColumnName("Team_Kit_Description");
@@ -834,13 +1032,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.TeamKits)
                     .HasForeignKey(d => d.KitId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team_Kit__Kit_id__1209AD79");
+                    .HasConstraintName("FK__Team_Kit__Kit_id__09A971A2");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.TeamKits)
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team_Kit__Team_i__11158940");
+                    .HasConstraintName("FK__Team_Kit__Team_i__08B54D69");
             });
 
             modelBuilder.Entity<TeamUser>(entity =>
@@ -861,13 +1059,13 @@ namespace DataLayer.DBContext
                     .WithMany(p => p.TeamUsers)
                     .HasForeignKey(d => d.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team_User__Team___09746778");
+                    .HasConstraintName("FK__Team_User__Team___01142BA1");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.TeamUsers)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Team_User__User___0A688BB1");
+                    .HasConstraintName("FK__Team_User__User___02084FDA");
             });
 
             modelBuilder.Entity<User>(entity =>

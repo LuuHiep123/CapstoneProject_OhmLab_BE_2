@@ -1,18 +1,20 @@
+using BusinessLayer.RequestModel.Assignment;
+using BusinessLayer.RequestModel.EquipmentType;
+using BusinessLayer.RequestModel.Grade;
+using BusinessLayer.RequestModel.Kit;
+using BusinessLayer.ResponseModel.BaseResponse;
+using BusinessLayer.ResponseModel.Grade;
+using BusinessLayer.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Security.Claims;
-using BusinessLayer.Service;
-using BusinessLayer.RequestModel.Assignment;
-using BusinessLayer.RequestModel.Grade;
-using BusinessLayer.ResponseModel.BaseResponse;
-using BusinessLayer.ResponseModel.Grade;
 
 namespace OhmLab_FUHCM_BE.Controller
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Grade/")]
     public class GradeController : ControllerBase
     {
         private readonly IGradeService _gradeService;
@@ -24,21 +26,27 @@ namespace OhmLab_FUHCM_BE.Controller
             _logger = logger;
         }
 
+        private Guid GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return userId;
+            }
+            return Guid.Empty;
+        }
+
         // Giảng viên chấm điểm cho team
-        [HttpPost("labs/{labId}/teams/{teamId}/grade")]
-        [Authorize(Roles = "Lecturer")]
-        public async Task<IActionResult> GradeTeamLab(int labId, int teamId, [FromBody] GradeTeamLabRequestModel model)
+        [HttpPost("GradeForTeam")]
+        [Authorize(Roles = "Lecturer,Admin,HeadOfDepartment")]
+        public async Task<IActionResult> GradeForTeam(CreateGradeRequestModel model)
         {
             try
             {
                 // Lấy lecturerId từ token
-                var lecturerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(lecturerIdClaim, out Guid lecturerId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
+                var lecturedId = GetCurrentUserId();
 
-                var result = await _gradeService.GradeTeamLabAsync(model, labId, teamId, lecturerId);
+                var result = await _gradeService.CreateGrade(model, lecturedId);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
@@ -48,256 +56,99 @@ namespace OhmLab_FUHCM_BE.Controller
             }
         }
 
-        // Cập nhật điểm cho toàn bộ thành viên trong team
-        [HttpPut("labs/{labId}/teams/{teamId}/grades")]
-        [Authorize(Roles = "Lecturer")]
-        public async Task<IActionResult> UpdateTeamGrades(int labId, int teamId, [FromBody] UpdateTeamGradesRequestModel model)
+        // lấy tất cả điểm của team
+        [HttpPost("SearchGrade")]
+        [Authorize(Roles = "Lecturer,Admin,HeadOfDepartment")]
+        public async Task<IActionResult> GetAllGrae(GetAllGradeRequestModel model)
         {
             try
             {
-                // Lấy lecturerId từ token
-                var lecturerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(lecturerIdClaim, out Guid lecturerId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.UpdateTeamGradesAsync(labId, teamId, model, lecturerId);
+                var result = await _gradeService.GetAllGrade(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi cập nhật điểm cho nhóm: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi cập nhật điểm: " + ex.Message });
-            }
-        }
-
-        // Giảng viên chấm điểm chi tiết cho từng member
-        [HttpPost("labs/{labId}/teams/{teamId}/members/{studentId}/grade")]
-        [Authorize(Roles = "Lecturer")]
-        public async Task<IActionResult> GradeTeamMember(int labId, int teamId, Guid studentId, [FromBody] GradeTeamMemberRequestModel model)
-        {
-            try
-            {
-                // Lấy lecturerId từ token
-                var lecturerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(lecturerIdClaim, out Guid lecturerId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.GradeTeamMemberAsync(model, labId, teamId, studentId, lecturerId);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GradeTeamMember: {Message}", ex.Message);
+                _logger.LogError(ex, "Error in GradeTeamLab: {Message}", ex.Message);
                 return StatusCode(500, new { success = false, message = ex.Message });
             }
         }
 
-        // Xem danh sách team cần chấm điểm
-        [HttpGet("labs/{labId}/pending-teams")]
-        [Authorize(Roles = "Lecturer")]
-        public async Task<IActionResult> GetPendingTeams(int labId)
+        [HttpPost("SearchGradeByRegisterScheduleIdAndTeamId")]
+        [Authorize(Roles = "Lecturer,Admin,HeadOfDepartment")]
+        public async Task<IActionResult> GetAllGraeforRegistrationScheduleAndTeamId(GetGradeOfTeamByRegistrationScheduleIdAndTeamId model)
         {
             try
             {
-                // Lấy lecturerId từ token
-                var lecturerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(lecturerIdClaim, out Guid lecturerId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.GetPendingTeamsAsync(labId, lecturerId);
+                var result = await _gradeService.GetGradeOfTeamByRegistrationScheduleIdAndTeamId(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetPendingTeams: {Message}", ex.Message);
+                _logger.LogError(ex, "Error in GradeTeamLab: {Message}", ex.Message);
                 return StatusCode(500, new { success = false, message = ex.Message });
             }
         }
 
-        // Team xem điểm của mình
-        [HttpGet("labs/{labId}/teams/{teamId}/grade")]
-        [Authorize(Roles = "Student,Lecturer")]
-        public async Task<IActionResult> GetTeamGrade(int labId, int teamId)
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [HttpGet("Registration/{registrationScheduleId}")]
+        public async Task<IActionResult> GetGradeByRegistrationScheduleId(int registrationScheduleId)
         {
             try
             {
-                // Lấy studentId từ token
-                var studentIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(studentIdClaim, out Guid studentId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.GetTeamGradeAsync(labId, teamId, studentId);
+                var result = await _gradeService.GetGradeOfTeamByRegistrationScheduleId(registrationScheduleId);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetTeamGrade: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
+                throw new Exception(ex.Message);
             }
         }
 
-        // Student xem điểm cá nhân của mình
-        [HttpGet("labs/{labId}/my-individual-grade")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetMyIndividualGrade(int labId)
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [HttpGet("Team/{teamId}")]
+        public async Task<IActionResult> GetGradeByTeamId(int teamId)
         {
             try
             {
-                // Lấy studentId từ token
-                var studentIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(studentIdClaim, out Guid studentId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.GetMyIndividualGradeAsync(labId, studentId);
+                var result = await _gradeService.GetGradeOfTeamByTeamId(teamId);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetMyIndividualGrade: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
+                throw new Exception(ex.Message);
             }
         }
 
-        // Xem thống kê điểm theo team (cho Lecturer)
-        [HttpGet("labs/{labId}/team-grade-statistics")]
-        [Authorize(Roles = "Lecturer")]
-        public async Task<IActionResult> GetTeamGradeStatistics(int labId)
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [HttpGet("{gradeId}")]
+        public async Task<IActionResult> GetGradeById(int gradeId)
         {
             try
             {
-                // Lấy lecturerId từ token
-                var lecturerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(lecturerIdClaim, out Guid lecturerId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.GetTeamGradeStatisticsAsync(labId, lecturerId);
+                var result = await _gradeService.GetGradeOfTeamById(gradeId);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetTeamGradeStatistics: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
+                throw new Exception(ex.Message);
             }
         }
 
-        // Xem tất cả điểm của lab (cho HeadOfDepartment)
-        [HttpGet("labs/{labId}/Grade-for-id")]
-        [Authorize(Roles = "HeadOfDepartment,Lecturer")]
-        public async Task<IActionResult> GetAllLabGrades(int labId)
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateGrade([FromBody] UpdateGradeRequestModel model)
         {
             try
             {
-                var result = await _gradeService.GetGradeById(labId);
+                var result = await _gradeService.UpdateGrade(model);
                 return StatusCode(result.Code, result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in GetAllLabGrades: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
-            }
-        }
-        [HttpGet("labs/all-grades")]
-        [Authorize(Roles = "HeadOfDepartment")]
-        public async Task<IActionResult> GetAllLabGrades()
-        {
-            try
-            {
-                var result = await _gradeService.GetAllGrade();
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetAllLabGrades: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
+                throw new Exception(ex.Message);
             }
         }
 
-        // Xem điểm của sinh viên cho tất cả các lab
-        [HttpGet("students/{studentId}/labs")]
-        [Authorize(Roles = "Student,Lecturer,HeadOfDepartment")]
-        public async Task<IActionResult> GetStudentLabGrades(Guid studentId)
-        {
-            try
-            {
-                // Lấy userId và role từ token
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-                
-                if (!Guid.TryParse(userIdClaim, out Guid userId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
 
-                var result = await _gradeService.GetStudentLabGradesAsync(studentId, userId, roleClaim);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetStudentLabGrades: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
-            }
-        }
-
-        // Lấy điểm số của tất cả sinh viên trong một lớp học
-        [HttpGet("classes/{classId}/grades")]
-        [Authorize(Roles = "Lecturer,Student")]
-        public async Task<IActionResult> GetClassGrades(int classId)
-        {
-            try
-            {
-                // Lấy userId và role từ token
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-                
-                if (!Guid.TryParse(userIdClaim, out Guid userId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.GetClassGradesAsync(classId, userId, roleClaim);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetClassGrades: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
-            }
-        }
-
-        // Cập nhật điểm số cho nhiều sinh viên trong lớp học
-        [HttpPut("classes/{classId}/grades")]
-        [Authorize(Roles = "Lecturer")]
-        public async Task<IActionResult> UpdateClassGrades(int classId, [FromBody] UpdateClassGradesRequestModel model)
-        {
-            try
-            {
-                // Lấy lecturerId từ token
-                var lecturerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(lecturerIdClaim, out Guid lecturerId))
-                {
-                    return Unauthorized(new { success = false, message = "Token không hợp lệ!" });
-                }
-
-                var result = await _gradeService.UpdateClassGradesAsync(classId, model, lecturerId);
-                return StatusCode(result.Code, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in UpdateClassGrades: {Message}", ex.Message);
-                return StatusCode(500, new { success = false, message = ex.Message });
-            }
-        }
     }
 }

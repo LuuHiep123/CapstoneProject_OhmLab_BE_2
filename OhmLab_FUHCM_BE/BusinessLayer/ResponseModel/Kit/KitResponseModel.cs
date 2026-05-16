@@ -12,6 +12,8 @@ namespace BusinessLayer.ResponseModel.Kit
         public string KitTemplateId { get; set; } = null!;
         public string KitTemplateName { get; set; } = null!;
         public string KitName { get; set; } = null!;
+        public int RoomId{ get; set; }
+        public int RoomName{ get; set; }
         public string? KitDescription { get; set; }
         public string? KitUrlImg { get; set; }
         public string KitUrlQr { get; set; } = null!;

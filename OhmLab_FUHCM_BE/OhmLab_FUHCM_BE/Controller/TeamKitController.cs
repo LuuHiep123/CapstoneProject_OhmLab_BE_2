@@ -94,7 +94,7 @@ namespace OhmLab_FUHCM_BE.Controller
             }
         }
 
-        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer")]
+        [Authorize(Roles = "Admin,HeadOfDepartment,Lecturer,Student")]
         [HttpGet("ListTeamKitTeamId/{teamId}")]
         public async Task<IActionResult> GetTeamKitByTeamId(int teamId)
         {
